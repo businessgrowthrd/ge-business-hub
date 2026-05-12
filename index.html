@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
   <title>GE Business Hub Pro · Ecosistema 360</title>
+  <meta name="description" content="GE Business Hub Pro: CRM, ventas, rutas, planificación y BI para operación empresarial." />
+  <meta name="application-name" content="GE Business Hub Pro" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GE Hub" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icons/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
@@ -48,6 +60,20 @@
     .sale-picker{border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035);padding:10px;margin-top:6px}
     .sale-search{margin:0 0 10px}.sale-selected{margin-top:8px}
 
+
+    /* Ventas + CRM: captura progresiva, validación RNC y estados UX */
+    .sale-client-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px}
+    .sale-client-toolbar label{margin:0}.sale-helper{font-size:12px;color:var(--muted);margin:7px 0 0}
+    .client-modal-intro{border:1px solid rgba(124,156,255,.26);background:linear-gradient(135deg,rgba(124,156,255,.12),rgba(53,211,153,.08));border-radius:18px;padding:14px;display:flex;gap:12px;align-items:flex-start}
+    .client-modal-intro .material-symbols-rounded{font-size:28px;color:var(--brand2)}
+    .field-message{min-height:18px;margin-top:6px;font-size:12px;color:var(--muted)}
+    .field-message.ok{color:var(--ok)}.field-message.error{color:var(--bad)}.field-message.warn{color:var(--warn)}
+    .input-ok{border-color:rgba(53,211,153,.65)!important;box-shadow:0 0 0 3px rgba(53,211,153,.12)!important}
+    .input-error{border-color:rgba(251,113,133,.85)!important;box-shadow:0 0 0 3px rgba(251,113,133,.14)!important}
+    .modal-status{margin-top:14px;border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13px;color:var(--muted)}
+    .modal-status.loading{border-color:rgba(124,156,255,.45);color:#dbeafe}.modal-status.success{border-color:rgba(53,211,153,.50);color:#bbf7d0}.modal-status.error{border-color:rgba(251,113,133,.50);color:#fecdd3}
+    .no-results-card{display:grid;gap:8px;text-align:left}.no-results-card .btn{justify-content:center}
+    .btn[disabled]{opacity:.58;cursor:not-allowed;filter:grayscale(.25)}
     .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.product-input{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:18px;padding:14px}.product-input input{font-size:22px;font-weight:900;text-align:center}.total-box{background:linear-gradient(135deg,rgba(124,156,255,.18),rgba(53,211,153,.12));border:1px solid rgba(124,156,255,.28);border-radius:18px;padding:16px}.total-box input{font-size:28px;font-weight:900;text-align:center;color:var(--ok)}
     @media(max-width:767px){
       body{font-size:15px}.hamb{display:grid}.topbar{align-items:flex-start}.title h2{font-size:18px}.title p{font-size:11px}.toolbar{width:100%}.topbar>.toolbar{display:none}.content{padding:var(--space)}
@@ -57,14 +83,29 @@
     }
     @media(min-width:768px){.mobile-overlay{display:none!important}.sidebar{transform:none!important}.bottom-nav{display:none!important}}
 
-  </style>
+
+
+    /* PWA install/update helpers */
+    .pwa-install-btn{position:fixed;right:18px;bottom:calc(86px + var(--safe-bot));z-index:150;border:1px solid rgba(124,156,255,.42);background:linear-gradient(135deg,var(--brand),var(--brand2));color:#071121;border-radius:999px;min-height:44px;padding:10px 14px;font-weight:900;box-shadow:var(--shadow);display:none;align-items:center;gap:8px}
+    .pwa-install-btn.show{display:inline-flex}.pwa-install-btn .material-symbols-rounded{font-size:20px}
+    .pwa-update-banner{position:fixed;left:50%;bottom:calc(18px + var(--safe-bot));transform:translateX(-50%);z-index:160;background:#111827;border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:16px;box-shadow:var(--shadow);padding:12px;display:none;gap:10px;align-items:center;max-width:min(94vw,560px)}
+    .pwa-update-banner.show{display:flex}.pwa-update-banner p{margin:0;color:var(--muted);font-size:13px}.pwa-update-banner button{white-space:nowrap}
+    @media(max-width:767px){.pwa-install-btn{right:12px;bottom:calc(84px + var(--safe-bot));padding:10px 12px}.pwa-update-banner{bottom:calc(78px + var(--safe-bot));}}
+
+  
+.row-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sale-client-toolbar{align-items:center}
+.sale-picker .check-row{gap:10px}
+.sale-picker .check-row .btn{margin-left:auto;min-width:44px;justify-content:center}
+@media(max-width:640px){.sale-client-toolbar{align-items:stretch}.row-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.row-actions .btn{width:100%;justify-content:center}.sale-picker .check-row{grid-template-columns:auto 1fr auto}}
+</style>
 </head>
 <body>
   <div id="root"></div><div id="modal" class="modal-bg"></div><div id="toast" class="toast"></div>
 <script>
 'use strict';
 (function(){
-const VERSION='7.9-empresas-json-operativo';
+const VERSION='8.4-ventas-crm-clean-ux';
 const STORE='ge_bh_pro_v77';
 const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes'];
 const CATS=['Fabriles','Servicios','Retail','Salud','ONG'];
@@ -148,7 +189,7 @@ function companyOperationalMeta(c){const parts=[c.city||'Sin ciudad',c.type||c.c
 function healthPotential(c){if(c.category!=='Salud'&&String(c.type||'').toLowerCase().indexOf('salud')<0&&String(c.sector||'').toLowerCase().indexOf('salud')<0)return '';const beds=Number(c.beds||0);const label=beds>=300?'Alto potencial':beds>=100?'Potencial medio':beds>0?'Potencial inicial':'Potencial no definido';return '<div class="health-box"><b>'+label+'</b><div class="meta">Camas registradas: '+esc(beds||'N/D')+' · Dato crítico para estimar demanda de hemoderivados, TPN y servicios médicos.</div></div>'}
 function companyCard(c){return '<div class="card company-card" data-cat="'+esc(c.category)+'"><div class="item-head"><div><h3>'+esc(c.name)+'</h3><div class="meta">'+companyOperationalMeta(c)+' · '+categoryBadge(c)+' '+statusBadge(c)+'</div></div><img class="logo-box" src="'+esc(OWNERS[c.owner]?.logo||'')+'" alt="Logo '+esc(ownerName(c.owner))+'" onerror="this.style.display=\'none\'"></div>'+healthPotential(c)+'<p class="note">'+esc(c.notes||'Sin notas')+'</p><div class="actions"><button class="btn small" data-company-crm="'+c.id+'">CRM</button><button class="btn small" data-company-forms="'+c.id+'">Formularios</button><button class="btn small" data-company-route="'+c.id+'">Ruta</button><button class="btn small" data-company-sale="'+c.id+'">Venta</button><button class="btn small" data-edit-company="'+c.id+'">Editar</button></div></div>'}
 function crm(){const selected=state.settings.companyId&&company(state.settings.companyId)?company(state.settings.companyId):scopedCompanies()[0];if(!selected)return '<div class="empty">Crea una empresa para visualizar CRM 360.</div>';return '<div class="toolbar"><select id="crmCompany">'+scopedCompanies().map(c=>'<option value="'+c.id+'" '+(c.id===selected.id?'selected':'')+'>'+esc(c.name)+'</option>').join('')+'</select></div>'+crmProfile(selected)}
-function crmProfile(c){const sales=state.sales.filter(s=>s.companyId===c.id), forms=state.formResponses.filter(f=>f.companyId===c.id), docs=state.documents.filter(d=>d.companyId===c.id), nets=state.networking.filter(n=>n.companyId===c.id), tasks=state.twelve.filter(t=>t.companyId===c.id), visits=state.visits.filter(v=>v.companyId===c.id);return '<div class="grid g3"><div class="card"><div class="item-head"><div><h3>'+esc(c.name)+'</h3><div class="meta">'+esc(ownerName(c.owner))+' · '+esc(c.category)+' · '+esc(c.status)+'</div></div><img class="logo-box" src="'+esc(OWNERS[c.owner]?.logo||'')+'" onerror="this.style.display=\'none\'"></div><hr style="border-color:var(--line)"><p><b>Contacto:</b> '+esc(c.contact||'')+'</p><p><b>Teléfono:</b> '+esc(c.phone||'')+'</p><p><b>Correo:</b> '+esc(c.email||'')+'</p><p><b>Sector:</b> '+esc(c.sector||'N/D')+'</p><p><b>Empleados:</b> '+esc(c.employees||'N/D')+'</p><p><b>Camas:</b> '+esc(c.beds||'N/D')+'</p>'+healthPotential(c)+'<p><b>Satisfacción:</b> '+esc(c.satisfaction)+'%</p><p><b>Última visita:</b> '+esc(c.lastVisit||'N/A')+' · '+daysSince(c.lastVisit)+' días</p><div class="actions"><button class="btn small" data-company-route="'+c.id+'">Planificar ruta</button><button class="btn small" data-company-forms="'+c.id+'">Formulario</button></div></div><div class="card"><h3>Historial comercial</h3>'+miniList([...sales.map(s=>s.date+' · Venta '+s.total+' uds'),...visits.map(v=>v.date+' · '+v.notes)].slice(-8).reverse())+'</div><div class="card"><h3>PDFs / Formularios</h3>'+miniList([...forms.map(f=>f.date+' · '+f.schemaTitle+' · '+(f.score??'N/A')), ...docs.map(d=>d.date+' · PDF · '+d.title)].slice(-8).reverse())+'</div></div><div class="grid g2" style="margin-top:14px"><div class="card"><h3>Networking de esta empresa</h3>'+miniList(nets.map(n=>n.date+' · '+n.source+' · '+n.summary).slice(-8).reverse())+'</div><div class="card"><h3>12 semanas / esfuerzo asignado</h3>'+miniList(tasks.map(t=>'Semana '+t.week+' · '+t.title+' · '+t.status).slice(-8).reverse())+'</div></div>'}
+function crmProfile(c){const sales=state.sales.filter(s=>s.companyId===c.id), forms=state.formResponses.filter(f=>f.companyId===c.id), docs=state.documents.filter(d=>d.companyId===c.id), nets=state.networking.filter(n=>n.companyId===c.id), tasks=state.twelve.filter(t=>t.companyId===c.id), visits=state.visits.filter(v=>v.companyId===c.id);return '<div class="grid g3"><div class="card"><div class="item-head"><div><h3>'+esc(c.name)+'</h3><div class="meta">'+esc(ownerName(c.owner))+' · '+esc(c.category)+' · '+esc(c.status)+'</div></div><img class="logo-box" src="'+esc(OWNERS[c.owner]?.logo||'')+'" onerror="this.style.display=\'none\'"></div><hr style="border-color:var(--line)"><p><b>RNC/Cédula:</b> '+esc(c.rnc||'N/D')+'</p><p><b>Contacto:</b> '+esc(c.contact||'')+'</p><p><b>Teléfono:</b> '+esc(c.phone||'')+'</p><p><b>Correo:</b> '+esc(c.email||'')+'</p><p><b>Sector:</b> '+esc(c.sector||'N/D')+'</p><p><b>Empleados:</b> '+esc(c.employees||'N/D')+'</p><p><b>Camas:</b> '+esc(c.beds||'N/D')+'</p>'+healthPotential(c)+'<p><b>Satisfacción:</b> '+esc(c.satisfaction)+'%</p><p><b>Última visita:</b> '+esc(c.lastVisit||'N/A')+' · '+daysSince(c.lastVisit)+' días</p><div class="actions"><button class="btn small" data-company-route="'+c.id+'">Planificar ruta</button><button class="btn small" data-company-forms="'+c.id+'">Formulario</button></div></div><div class="card"><h3>Historial comercial</h3>'+miniList([...sales.map(s=>s.date+' · Venta '+s.total+' uds'),...visits.map(v=>v.date+' · '+v.notes)].slice(-8).reverse())+'</div><div class="card"><h3>PDFs / Formularios</h3>'+miniList([...forms.map(f=>f.date+' · '+f.schemaTitle+' · '+(f.score??'N/A')), ...docs.map(d=>d.date+' · PDF · '+d.title)].slice(-8).reverse())+'</div></div><div class="grid g2" style="margin-top:14px"><div class="card"><h3>Networking de esta empresa</h3>'+miniList(nets.map(n=>n.date+' · '+n.source+' · '+n.summary).slice(-8).reverse())+'</div><div class="card"><h3>12 semanas / esfuerzo asignado</h3>'+miniList(tasks.map(t=>'Semana '+t.week+' · '+t.title+' · '+t.status).slice(-8).reverse())+'</div></div>'}
 function miniList(arr){return arr.length?'<div class="list">'+arr.map(x=>'<div class="item">'+esc(x)+'</div>').join('')+'</div>':'<div class="empty">Sin registros vinculados.</div>'}
 function planning(){
  return '<div class="grid g2"><div class="card"><div class="card-title"><div><h3>Planificación semanal por provincia, ciudad y destinos</h3><p>Selecciona una provincia y ciudad. El sistema carga las empresas del CRM en una lista plegable con checks para armar la ruta diaria.</p></div></div><div class="week route-day-grid">'+DAYS.map(dayPlan).join('')+'</div><div class="actions" style="margin-top:14px"><button class="btn primary" data-save-plan>Guardar planificación</button><button class="btn" data-generate-week-route>Generar rutas inteligentes</button></div></div><div class="card"><h3>Ruta optimizada por distancia + última visita</h3><div id="routeOutput">'+routeOutput()+'</div></div></div><div class="card" style="margin-top:14px"><h3>Mapa</h3><div id="map" class="map"></div></div>'
@@ -178,13 +219,116 @@ function optimizeRoute(ids,plan={}){const companies=ids.map(company).filter(Bool
 function routeRank(c,current){const km=dist(current,c);return km*2.2 - Math.min(daysSince(c.lastVisit),180)*0.16 - priorityScore(c.priority)*7 - Math.min(salesUnits(c.id,90),160)*0.05 + (c.satisfaction<75?-10:0)} function dist(a,b){const R=6371, dLat=(Number(b.lat)-Number(a.lat))*Math.PI/180, dLng=(Number(b.lng)-Number(a.lng))*Math.PI/180, la1=Number(a.lat)*Math.PI/180, la2=Number(b.lat)*Math.PI/180;const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h))} function minToTime(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
 function routeOutput(){let html='';DAYS.forEach(day=>{const p=state.plans[day];if(!p||!p.companyIds?.length)return;const result=optimizeRoute(p.companyIds,p);const totalKm=result.out.reduce((a,r)=>a+r.km,0);html+='<h4>'+day+' · '+esc(p.province||provinceForCity(p.city)||'RD')+' · '+esc(p.city||'Sin ciudad')+'</h4><div class="slot"><b>Salida sugerida:</b> '+esc(result.start.label)+' · <b>Distancia total aprox.:</b> '+totalKm.toFixed(1)+' km · <b>Destinos con coordenadas:</b> '+result.out.length+'</div><div class="timeline">'+result.out.map((r,i)=>'<div class="tl"><b>'+r.arrival+' · '+esc(r.company.name)+'</b><div class="meta">Orden '+(i+1)+' · '+r.km.toFixed(1)+' km · '+r.move+' min traslado · '+r.overdue+' días sin visita · ventas 90d '+r.sales90+' uds · score '+r.score+'</div></div>').join('')+'</div>';if(result.noCoords.length)html+='<div class="item"><b>Sin coordenadas para mapa/ruta</b><div class="meta">'+result.noCoords.map(c=>esc(c.name)).join(' · ')+'</div></div>'});return html||'<div class="empty">Selecciona provincia, ciudad y destinos para generar una ruta.</div>'}
 
+
+
+function normDoc(v){return String(v||'').replace(/[^0-9A-Za-z]/g,'').toUpperCase()}
+function delay(ms=0){return new Promise(resolve=>setTimeout(resolve,ms))}
+function findCompanyByRnc(rnc){const key=normDoc(rnc);return key?state.companies.find(c=>normDoc(c.rnc)===key):null}
+
+/* Ventas + CRM Service Layer: reglas de negocio separadas del DOM */
+const SalesCrmService={
+  validateRnc(value){
+    const cleanDoc=normDoc(value);
+    if(!cleanDoc)return {ok:false,level:'error',message:'RNC/Cédula requerido para prevenir duplicados.'};
+    if(cleanDoc.length<9||cleanDoc.length>11)return {ok:false,level:'error',message:'Formato inválido. Usa 9 dígitos para RNC o 11 para cédula.'};
+    if(!/^\d+$/.test(cleanDoc))return {ok:false,level:'error',message:'Usa solo números en RNC/Cédula.'};
+    const duplicated=findCompanyByRnc(cleanDoc);
+    if(duplicated)return {ok:true,level:'warn',duplicate:duplicated,message:'Ya existe en CRM: '+duplicated.name+'. Se vinculará automáticamente.'};
+    return {ok:true,level:'ok',message:'Documento válido y disponible para nuevo cliente.'};
+  },
+  validateEmail(value){
+    const email=clean(value||'');
+    return !email||/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  },
+  buildClientPayload(formData){
+    const name=clean(formData.name||'');
+    const rnc=clean(formData.rnc||'');
+    const phone=clean(formData.phone||'');
+    const email=clean(formData.email||'');
+    if(!name)throw new Error('Nombre/Razón Social requerido.');
+    const rncStatus=this.validateRnc(rnc);
+    if(!rncStatus.ok)throw new Error(rncStatus.message);
+    if(!this.validateEmail(email))throw new Error('Email inválido.');
+    return {name,rnc,phone,email};
+  },
+  async upsertClient(payload){
+    await delay(120);
+    const docStatus=this.validateRnc(payload.rnc);
+    if(docStatus.duplicate)return {company:docStatus.duplicate,created:false};
+    const owner=state.settings.owner==='all'?'hemocura':state.settings.owner;
+    const now=new Date().toISOString();
+    const rec={
+      id:uid('c'),owner,
+      name:payload.name,rnc:payload.rnc,
+      category:'Salud',type:'Salud',sector:'Centro médico / cliente de hemoderivados',
+      city:'Sin ciudad',employees:null,beds:null,contact:'',phone:payload.phone,email:payload.email,
+      address:'',lat:null,lng:null,priority:'media',status:'Cliente',satisfaction:80,lastVisit:'',
+      origen:'Ventana_Ventas',fecha_registro:now,
+      notes:'Creado desde Ventas para vinculación automática CRM/Ventas. Origen: Ventana_Ventas. Fecha registro: '+now
+    };
+    setState({companies:[...state.companies,rec]});
+    return {company:rec,created:true};
+  }
+};
+
+/* UI Layer: modal y estados visuales */
+function openQuickSaleClientForm(prefill=''){
+ openModal('Nuevo cliente desde ventas','<div class="client-modal-intro"><span class="material-symbols-rounded">person_add</span><div><b>Alta rápida CRM + Ventas</b><p class="note">Captura progresiva: usa este modal solo cuando el buscador no encuentra el cliente o cuando presionas “+ Nuevo cliente”. Si el RNC/Cédula ya existe, no se duplica; se selecciona automáticamente el cliente existente.</p></div></div><div class="form-grid" style="margin-top:14px"><div><label>Nombre/Razón Social</label><input id="qClientName" autocomplete="organization" placeholder="Hospital, clínica o centro médico" value="'+esc(prefill)+'"><div id="qNameMsg" class="field-message">Nombre comercial o razón social del cliente.</div></div><div><label>RNC/Cédula</label><input id="qClientRnc" inputmode="numeric" autocomplete="off" placeholder="Ej. 101000000"><div id="qRncMsg" class="field-message">Valida duplicados en tiempo real.</div></div><div><label>Teléfono/WhatsApp</label><input id="qClientPhone" inputmode="tel" autocomplete="tel" placeholder="809-000-0000"><div class="field-message">Opcional, pero recomendado para CRM.</div></div><div><label>Email</label><input id="qClientEmail" type="email" autocomplete="email" placeholder="correo@empresa.com"><div id="qEmailMsg" class="field-message">Opcional. Se valida el formato si lo completas.</div></div></div><div id="qClientStatus" class="modal-status">El cliente se creará como empresa del sector Salud y quedará disponible en Ventas, CRM 360, rutas y BI.</div>','<button class="btn" data-close>Cancelar</button><button id="qSaveClientBtn" class="btn primary" data-save-quick-sale-client>Crear y seleccionar</button>');
+ setTimeout(updateQuickClientValidation,0);
+}
+function quickClientFormData(){return {name:document.getElementById('qClientName')?.value||'',rnc:document.getElementById('qClientRnc')?.value||'',phone:document.getElementById('qClientPhone')?.value||'',email:document.getElementById('qClientEmail')?.value||''}}
+function setQuickClientStatus(message,type=''){
+ const box=document.getElementById('qClientStatus');if(!box)return;box.className='modal-status '+type;box.textContent=message;
+}
+function setFieldMessage(id,message,type=''){
+ const el=document.getElementById(id);if(!el)return;el.className='field-message '+type;el.textContent=message;
+}
+function markInput(el,stateName){if(!el)return;el.classList.remove('input-ok','input-error');if(stateName)el.classList.add(stateName)}
+function updateQuickClientValidation(){
+ const data=quickClientFormData();
+ const rncEl=document.getElementById('qClientRnc'), emailEl=document.getElementById('qClientEmail'), saveBtn=document.getElementById('qSaveClientBtn');
+ const doc=SalesCrmService.validateRnc(data.rnc);
+ setFieldMessage('qRncMsg',doc.message,doc.level);
+ markInput(rncEl,doc.ok?(doc.duplicate?'':'input-ok'):'input-error');
+ const emailOk=SalesCrmService.validateEmail(data.email);
+ setFieldMessage('qEmailMsg',emailOk?'Email válido o vacío.':'Formato de email inválido.',emailOk?'ok':'error');
+ markInput(emailEl,data.email?(emailOk?'input-ok':'input-error'):'');
+ const nameOk=clean(data.name).length>1;
+ setFieldMessage('qNameMsg',nameOk?'Nombre listo.':'Nombre/Razón Social requerido.',nameOk?'ok':'error');
+ if(saveBtn){saveBtn.disabled=!(doc.ok&&emailOk&&nameOk);saveBtn.textContent=doc.duplicate?'Usar cliente existente':'Crear y seleccionar'}
+ if(doc.duplicate)setQuickClientStatus('Duplicado detectado: al guardar, la venta quedará vinculada a '+doc.duplicate.name+'.','success');
+ else if(doc.ok&&nameOk&&emailOk)setQuickClientStatus('Datos validados. Listo para guardar sin salir de la venta.','success');
+ else setQuickClientStatus('Completa los campos requeridos para habilitar el guardado.','');
+}
+async function saveQuickSaleClient(){
+ const btn=document.getElementById('qSaveClientBtn');
+ try{
+   if(btn){btn.disabled=true;btn.textContent='Guardando...'}
+   setQuickClientStatus('Guardando en CRM y preparando selección automática...','loading');
+   const payload=SalesCrmService.buildClientPayload(quickClientFormData());
+   const result=await SalesCrmService.upsertClient(payload);
+   state.settings.companyId=result.company.id;
+   setQuickClientStatus(result.created?'Cliente creado correctamente.':'Cliente existente vinculado correctamente.','success');
+   await delay(250);
+   closeModal();
+   schedule();
+   toast((result.created?'Cliente creado y seleccionado: ':'Cliente existente seleccionado: ')+result.company.name,'ok');
+ }catch(err){
+   console.error(err);
+   setQuickClientStatus(err.message||'No se pudo guardar el cliente.','error');
+   toast(err.message||'No se pudo crear el cliente','error');
+   if(btn){btn.disabled=false;btn.textContent='Crear y seleccionar'}
+ }
+}
+
 function sales(){
  const health=compsForHealthSales();const branches=branchScope();const selectedId=(state.settings.companyId&&health.some(c=>c.id===state.settings.companyId))?state.settings.companyId:'';
- return '<div class="grid g2"><div class="card"><div class="card-title"><div><h3>Reporte rápido de ventas · Hemoderivados</h3><p>Selecciona con check una empresa del sector Salud. La lista es plegable, buscable y validada antes de guardar.</p></div></div><input id="saleCompany" type="hidden" value="'+esc(selectedId)+'"><label>Empresa de Salud facturada/despachada</label><details class="collapse-list sale-picker" open><summary><span>Empresas sector Salud</span><span class="selected-pill" id="saleSelectedLabel">'+esc(selectedId?(company(selectedId)?.name||'Seleccionada'):'Sin seleccionar')+'</span></summary><div class="check-list"><input class="sale-search" id="saleCompanySearch" placeholder="Buscar hospital, clínica, centro médico..." value="">'+salesCompanyOptions(health,selectedId)+'</div></details><div class="form-grid" style="margin-top:12px"><div><label>Sucursal operativa</label><select id="saleBranch"><option value="">Sin sucursal</option>'+branches.map(b=>'<option value="'+b.id+'" '+(state.settings.branchId===b.id?'selected':'')+'>'+esc(b.label||b.name)+'</option>').join('')+'</select></div><div><label>Fecha</label><input id="saleDate" type="date" value="'+today()+'"></div></div><div class="product-grid" style="margin-top:12px">'+PRODUCTS.map(([k,label],i)=>'<div class="product-input"><label>'+esc(label)+'</label><input class="saleQty" id="prod'+i+'" type="number" inputmode="numeric" min="0" value="0"></div>').join('')+'<div class="total-box"><label>Total unidades</label><input id="saleTotal" readonly value="0"></div></div><label style="margin-top:12px">Notas</label><textarea id="saleNotes" placeholder="Observaciones del despacho, factura o contacto..."></textarea><button class="btn primary" data-save-sale style="margin-top:12px">Guardar venta</button></div><div class="card"><h3>Historial de ventas</h3>'+salesHistory()+'</div></div><div class="card" style="margin-top:14px"><h3>Sumatoria semanal por producto</h3>'+weeklySalesSummary()+'</div>'
+ return '<div class="grid g2"><div class="card"><div class="card-title"><div><h3>Reporte rápido de ventas · Hemoderivados</h3><p>Selecciona con check una empresa del sector Salud. La lista es plegable, buscable y validada antes de guardar.</p></div></div><input id="saleCompany" type="hidden" value="'+esc(selectedId)+'"><div class="sale-client-toolbar"><label>Empresa de Salud facturada/despachada</label><div class="row-actions"><button class="btn small primary" data-new-sale-client type="button" title="Crear cliente sin salir de la venta"><span class="material-symbols-rounded">add</span>Nuevo cliente</button><button class="btn small" data-edit-sale-company type="button" title="Editar la empresa seleccionada en CRM"><span class="material-symbols-rounded">edit</span>Editar cliente</button></div></div><div class="sale-helper">Busca primero. Si no aparece, usa “Nuevo cliente”. Si el cliente ya está seleccionado, puedes editar sus datos sin salir del flujo de venta.</div><details class="collapse-list sale-picker" open><summary><span>Empresas sector Salud</span><span class="selected-pill" id="saleSelectedLabel">'+esc(selectedId?(company(selectedId)?.name||'Seleccionada'):'Sin seleccionar')+'</span></summary><div class="check-list"><input class="sale-search" id="saleCompanySearch" placeholder="Buscar hospital, clínica, centro médico..." value="">'+salesCompanyOptions(health,selectedId)+'</div></details><div class="form-grid" style="margin-top:12px"><div><label>Sucursal operativa</label><select id="saleBranch"><option value="">Sin sucursal</option>'+branches.map(b=>'<option value="'+b.id+'" '+(state.settings.branchId===b.id?'selected':'')+'>'+esc(b.label||b.name)+'</option>').join('')+'</select></div><div><label>Fecha</label><input id="saleDate" type="date" value="'+today()+'"></div></div><div class="product-grid" style="margin-top:12px">'+PRODUCTS.map(([k,label],i)=>'<div class="product-input"><label>'+esc(label)+'</label><input class="saleQty" id="prod'+i+'" type="number" inputmode="numeric" min="0" value="0"></div>').join('')+'<div class="total-box"><label>Total unidades</label><input id="saleTotal" readonly value="0"></div></div><label style="margin-top:12px">Notas</label><textarea id="saleNotes" placeholder="Observaciones del despacho, factura o contacto..."></textarea><button class="btn primary" data-save-sale style="margin-top:12px">Guardar venta</button></div><div class="card"><h3>Historial de ventas</h3>'+salesHistory()+'</div></div><div class="card" style="margin-top:14px"><h3>Sumatoria semanal por producto</h3>'+weeklySalesSummary()+'</div>'
 }
 function compsForHealthSales(){return scopedCompanies().filter(c=>c.category==='Salud'||/salud|hospital|clinica|clínica|medic|centro|ars|dispensario|laboratorio|farm/i.test([c.type,c.sector,c.name].join(' ')))}
-function salesCompanyOptions(list,selectedId,query=''){const q=normalizeCity(query);const rows=list.filter(c=>!q||normalizeCity([c.name,c.city,c.sector,c.type].join(' ')).includes(q));return rows.length?rows.map(c=>'<label class="check-row" data-sale-row><input type="checkbox" data-sale-company-option value="'+c.id+'" '+(selectedId===c.id?'checked':'')+'><span><strong>'+esc(c.name)+'</strong><span class="meta">'+esc(c.city||'Sin ciudad')+' · '+esc(c.sector||c.type||'Salud')+' · camas '+esc(c.beds||'N/D')+' · ventas 90d '+salesUnits(c.id,90)+' uds</span></span></label>').join(''):'<div class="empty" style="padding:14px">No hay empresas de Salud para esta búsqueda. Edita la ficha de empresa y clasifícala como Salud.</div>'}
+function salesCompanyOptions(list,selectedId,query=''){const q=normalizeCity(query);const rows=list.filter(c=>!q||normalizeCity([c.name,c.city,c.sector,c.type].join(' ')).includes(q));return rows.length?rows.map(c=>'<label class="check-row" data-sale-row><input type="checkbox" data-sale-company-option value="'+c.id+'" '+(selectedId===c.id?'checked':'')+'><span><strong>'+esc(c.name)+'</strong><span class="meta">'+esc(c.city||'Sin ciudad')+' · '+esc(c.sector||c.type||'Salud')+' · camas '+esc(c.beds||'N/D')+' · ventas 90d '+salesUnits(c.id,90)+' uds</span></span><button class="btn small" type="button" data-edit-company="'+c.id+'" title="Editar registro de empresa"><span class="material-symbols-rounded">edit</span></button></label>').join(''):'<div class="empty no-results-card" style="padding:14px"><b>No encontramos empresas de Salud con esa búsqueda.</b><span>Captura progresiva: crea el cliente sin salir de la venta y el sistema lo seleccionará automáticamente.</span><button class="btn primary small" data-new-sale-client type="button"><span class="material-symbols-rounded">add</span>Nuevo cliente</button></div>'}
 function salesHistory(){const rows=state.sales.filter(s=>inScope(s.companyId)).sort((a,b)=>b.date.localeCompare(a.date));return rows.length?'<div class="list">'+rows.map(s=>'<div class="item"><b>'+esc(s.date)+' · '+esc(company(s.companyId)?.name||'Empresa')+'</b><div class="meta">Sucursal '+esc(branch(s.branchId)?.label||'N/A')+' · Sangre '+s.products.sangre+' · Globular '+s.products.globular+' · Plaquetas '+s.products.plaquetas+' · Plasma '+s.products.plasma+' · Total '+s.total+'</div></div>').join('')+'</div>':'<div class="empty">Sin ventas registradas.</div>'}
+function editSelectedSaleCompany(){const id=document.getElementById('saleCompany')?.value||state.settings.companyId;if(!id||!company(id)){toast('Selecciona una empresa de Salud antes de editar.','error');return}openCompanyForm(id)}
 function saveSale(){const comp=company(document.getElementById('saleCompany').value);if(!comp){toast('Selecciona la empresa','error');return}const products={sangre:num(prod0.value),globular:num(prod1.value),plaquetas:num(prod2.value),plasma:num(prod3.value)};const total=Object.values(products).reduce((a,b)=>a+b,0);if(total<=0){toast('Ingresa al menos una unidad','error');return}const branchId=document.getElementById('saleBranch')?.value||'';const rec={id:uid('sale'),companyId:comp.id,branchId,owner:comp.owner,date:saleDate.value||today(),products,total,notes:clean(saleNotes.value)};setState({sales:[...state.sales,rec],visits:[...state.visits,{id:uid('v'),companyId:comp.id,branchId,owner:comp.owner,date:rec.date,city:comp.city,notes:'Venta registrada: '+total+' unidades',result:'Venta'}],companies:state.companies.map(c=>c.id===comp.id?{...c,lastVisit:rec.date}:c),settings:{...state.settings,branchId}});toast('Venta guardada en CRM y sucursal','ok')}
 function weekKey(date){const d=new Date(date+'T00:00:00');if(isNaN(d))return 'Sin fecha';const tmp=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=tmp.getUTCDay()||7;tmp.setUTCDate(tmp.getUTCDate()+4-day);const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));const week=Math.ceil((((tmp-yearStart)/86400000)+1)/7);return tmp.getUTCFullYear()+'-S'+String(week).padStart(2,'0')}
 function weeklySalesSummary(branchId=''){const rows=state.sales.filter(s=>inScope(s.companyId)&&(!branchId||s.branchId===branchId));const by={};rows.forEach(s=>{const k=weekKey(s.date);by[k]=by[k]||{sangre:0,globular:0,plaquetas:0,plasma:0,total:0};PRODUCTS.forEach(([key])=>by[k][key]+=num(s.products[key]));by[k].total+=num(s.total)});const keys=Object.keys(by).sort().reverse().slice(0,12);if(!keys.length)return '<div class="empty">Sin ventas para calcular semanas.</div>';return '<div class="sales-matrix"><table><thead><tr><th>Semana</th>'+PRODUCTS.map(p=>'<th>'+esc(p[1])+'</th>').join('')+'<th>Total</th></tr></thead><tbody>'+keys.map(k=>'<tr><td><b>'+esc(k)+'</b></td>'+PRODUCTS.map(([key])=>'<td>'+by[k][key]+'</td>').join('')+'<td><b>'+by[k].total+'</b></td></tr>').join('')+'</tbody></table></div>'}
@@ -229,8 +373,8 @@ function normalizeOwner(v){const s=String(v||'').toLowerCase().normalize('NFD').
 function mergeCompanies(records){const current=state.companies.slice();let added=0,updated=0;const keyOf=c=>(String(c.name||'').toLowerCase().trim()+'|'+String(c.city||'').toLowerCase().trim());records.forEach(rec=>{let idx=current.findIndex(c=>c.id===rec.id);if(idx<0&&rec.email)idx=current.findIndex(c=>c.email&&c.email.toLowerCase()===rec.email.toLowerCase());if(idx<0&&rec.phone)idx=current.findIndex(c=>c.phone&&c.phone.replace(/\D/g,'')===rec.phone.replace(/\D/g,''));if(idx<0)idx=current.findIndex(c=>keyOf(c)===keyOf(rec));if(idx>=0){current[idx]={...current[idx],...rec,id:current[idx].id,notes:[current[idx].notes,rec.notes].filter(Boolean).join(' | ')};updated++}else{current.push(rec);added++}});return{companies:current,added,updated}}
 function showImportErrors(errors,total){openModal('Importación cancelada','<p class="note">No se encontró ningún registro utilizable. La base de datos no fue modificada.</p><p><b>Registros revisados:</b> '+esc(total)+'</p><div class="import-error-list"><ul>'+errors.slice(0,80).map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul></div>'+(errors.length>80?'<p class="note">Se muestran los primeros 80 errores.</p>':''),'<button class="btn primary" data-close>Corregir archivo</button>');toast('Archivo JSON sin registros utilizables','error')}
 function downloadCompanyTemplate(){downloadJson([{Nombre:'Hospital Ejemplo',Tipo:'Salud',Sector:'Hospital Público',Ciudad:'Santiago de los Caballeros',Dirección:'Av. Ejemplo 123',Empleados:350,Camas:120,Teléfono:'809-000-0000',Email:'contacto@ejemplo.com',Contacto:'Nombre Apellido',Prioridad:'alta',Latitud:19.451,Longitud:-70.697,Notas:'Registro de ejemplo operativo para CRM, rutas y mapa.'},{Nombre:'Industria Ejemplo',Tipo:'Fabril',Sector:'Manufactura',Ciudad:'Santiago de los Caballeros',Dirección:'Zona Industrial',Empleados:800,Camas:0,Teléfono:'809-111-1111',Email:'operaciones@industria.com',Contacto:'Gerente de Compras',Prioridad:'media',Latitud:19.46,Longitud:-70.70,Notas:'Ejemplo fabril.'}],'plantilla-empresas-ge-business-hub.json')}
-function openCompanyForm(id){const c=id?company(id):{id:'',owner:state.settings.owner==='all'?'hemocura':state.settings.owner,name:'',category:'Servicios',type:'',sector:'',city:'',employees:'',beds:'',contact:'',phone:'',email:'',address:'',lat:'',lng:'',priority:'media',status:'Prospecto',satisfaction:80,lastVisit:today(),notes:''};openModal((id?'Editar':'Nueva')+' empresa','<div class="form-grid"><div><label>Nombre</label><input id="mName" value="'+esc(c.name)+'"></div><div><label>Unidad</label><select id="mOwner">'+Object.entries(OWNERS).filter(([k])=>k!=='all').map(([k,b])=>'<option value="'+k+'" '+(c.owner===k?'selected':'')+'>'+esc(b.name)+'</option>').join('')+'</select></div><div><label>Tipo / categoría operativa</label><select id="mCat">'+CATS.map(x=>'<option '+(c.category===x?'selected':'')+'>'+x+'</option>').join('')+'</select><div class="field-hint">Equivale al campo Tipo del JSON: Fabril, Servicios, Retail, Salud u ONG.</div></div><div><label>Sector</label><input id="mSector" value="'+esc(c.sector||'')+'"></div><div><label>Subtipo / actividad</label><input id="mType" value="'+esc(c.type)+'"></div><div><label>Ciudad</label><input id="mCity" list="rdCityListCompany" value="'+esc(c.city)+'"><datalist id="rdCityListCompany">'+ALL_CITIES.map(x=>'<option value="'+esc(x)+'"></option>').join('')+'</datalist></div><div><label>Dirección</label><input id="mAddress" value="'+esc(c.address)+'"></div><div><label>Prioridad</label><select id="mPriority"><option '+(c.priority==='alta'?'selected':'')+'>alta</option><option '+(c.priority==='media'?'selected':'')+'>media</option><option '+(c.priority==='baja'?'selected':'')+'>baja</option></select></div><div><label>Empleados</label><input id="mEmployees" type="number" min="0" step="1" value="'+esc(c.employees??'')+'"></div><div><label>Camas</label><input id="mBeds" type="number" min="0" step="1" value="'+esc(c.beds??'')+'"><div class="field-hint">Crítico para Salud: potencial de demanda médica/hemoderivados.</div></div><div><label>Contacto</label><input id="mContact" value="'+esc(c.contact)+'"></div><div><label>Teléfono</label><input id="mPhone" value="'+esc(c.phone)+'"></div><div><label>Email</label><input id="mEmail" value="'+esc(c.email)+'"></div><div><label>Estatus</label><input id="mStatus" value="'+esc(c.status)+'"></div><div><label>Latitud</label><input id="mLat" type="number" step="any" value="'+esc(c.lat)+'"></div><div><label>Longitud</label><input id="mLng" type="number" step="any" value="'+esc(c.lng)+'"></div><div><label>Satisfacción %</label><input id="mSat" type="number" min="0" max="100" value="'+esc(c.satisfaction)+'"></div><div><label>Última visita</label><input id="mLast" type="date" value="'+esc(c.lastVisit||today())+'"></div><div style="grid-column:1/-1"><label>Notas</label><textarea id="mNotes">'+esc(c.notes)+'</textarea></div></div>','<button class="btn" data-close>Cancelar</button><button class="btn primary" data-save-company="'+esc(id||'')+'">Guardar</button>')}
-function saveCompany(id){const rec={id:id||uid('c'),owner:mOwner.value,name:clean(mName.value),category:mCat.value,type:clean(mType.value)||mCat.value,sector:clean(mSector.value),city:clean(mCity.value),employees:mEmployees.value===''?null:Number(mEmployees.value),beds:mBeds.value===''?null:Number(mBeds.value),contact:clean(mContact.value),phone:clean(mPhone.value),email:clean(mEmail.value),address:clean(mAddress.value),lat:mLat.value===''?null:Number(mLat.value),lng:mLng.value===''?null:Number(mLng.value),priority:mPriority.value,status:clean(mStatus.value),satisfaction:num(mSat.value),lastVisit:mLast.value,notes:clean(mNotes.value)};if(!rec.name)return toast('Nombre requerido','error');if(!CATS.includes(rec.category))return toast('Tipo/categoría requerida','error');if(rec.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rec.email))return toast('Email inválido','error');if((rec.lat!==null&&!Number.isFinite(rec.lat))||(rec.lng!==null&&!Number.isFinite(rec.lng)))return toast('Latitud/Longitud inválidas','error');if((rec.employees!==null&&!Number.isFinite(rec.employees))||(rec.beds!==null&&!Number.isFinite(rec.beds)))return toast('Empleados/Camas inválidos','error');if(id)setState({companies:state.companies.map(c=>c.id===id?rec:c)});else setState({companies:[...state.companies,rec]});closeModal();toast('Empresa guardada','ok')}
+function openCompanyForm(id){const c=id?company(id):{id:'',owner:state.settings.owner==='all'?'hemocura':state.settings.owner,name:'',rnc:'',category:'Servicios',type:'',sector:'',city:'',employees:'',beds:'',contact:'',phone:'',email:'',address:'',lat:'',lng:'',priority:'media',status:'Prospecto',satisfaction:80,lastVisit:today(),notes:''};openModal((id?'Editar':'Nueva')+' empresa','<div class="form-grid"><div><label>Nombre</label><input id="mName" value="'+esc(c.name)+'"></div><div><label>RNC/Cédula</label><input id="mRnc" value="'+esc(c.rnc||'')+'" placeholder="RNC o cédula, si aplica"></div><div><label>Unidad</label><select id="mOwner">'+Object.entries(OWNERS).filter(([k])=>k!=='all').map(([k,b])=>'<option value="'+k+'" '+(c.owner===k?'selected':'')+'>'+esc(b.name)+'</option>').join('')+'</select></div><div><label>Tipo / categoría operativa</label><select id="mCat">'+CATS.map(x=>'<option '+(c.category===x?'selected':'')+'>'+x+'</option>').join('')+'</select><div class="field-hint">Equivale al campo Tipo del JSON: Fabril, Servicios, Retail, Salud u ONG.</div></div><div><label>Sector</label><input id="mSector" value="'+esc(c.sector||'')+'"></div><div><label>Subtipo / actividad</label><input id="mType" value="'+esc(c.type)+'"></div><div><label>Ciudad</label><input id="mCity" list="rdCityListCompany" value="'+esc(c.city)+'"><datalist id="rdCityListCompany">'+ALL_CITIES.map(x=>'<option value="'+esc(x)+'"></option>').join('')+'</datalist></div><div><label>Dirección</label><input id="mAddress" value="'+esc(c.address)+'"></div><div><label>Prioridad</label><select id="mPriority"><option '+(c.priority==='alta'?'selected':'')+'>alta</option><option '+(c.priority==='media'?'selected':'')+'>media</option><option '+(c.priority==='baja'?'selected':'')+'>baja</option></select></div><div><label>Empleados</label><input id="mEmployees" type="number" min="0" step="1" value="'+esc(c.employees??'')+'"></div><div><label>Camas</label><input id="mBeds" type="number" min="0" step="1" value="'+esc(c.beds??'')+'"><div class="field-hint">Crítico para Salud: potencial de demanda médica/hemoderivados.</div></div><div><label>Contacto</label><input id="mContact" value="'+esc(c.contact)+'"></div><div><label>Teléfono</label><input id="mPhone" value="'+esc(c.phone)+'"></div><div><label>Email</label><input id="mEmail" value="'+esc(c.email)+'"></div><div><label>Estatus</label><input id="mStatus" value="'+esc(c.status)+'"></div><div><label>Latitud</label><input id="mLat" type="number" step="any" value="'+esc(c.lat)+'"></div><div><label>Longitud</label><input id="mLng" type="number" step="any" value="'+esc(c.lng)+'"></div><div><label>Satisfacción %</label><input id="mSat" type="number" min="0" max="100" value="'+esc(c.satisfaction)+'"></div><div><label>Última visita</label><input id="mLast" type="date" value="'+esc(c.lastVisit||today())+'"></div><div style="grid-column:1/-1"><label>Notas</label><textarea id="mNotes">'+esc(c.notes)+'</textarea></div></div>','<button class="btn" data-close>Cancelar</button><button class="btn primary" data-save-company="'+esc(id||'')+'">Guardar</button>')}
+function saveCompany(id){const rec={id:id||uid('c'),owner:mOwner.value,name:clean(mName.value),rnc:clean(mRnc.value),category:mCat.value,type:clean(mType.value)||mCat.value,sector:clean(mSector.value),city:clean(mCity.value),employees:mEmployees.value===''?null:Number(mEmployees.value),beds:mBeds.value===''?null:Number(mBeds.value),contact:clean(mContact.value),phone:clean(mPhone.value),email:clean(mEmail.value),address:clean(mAddress.value),lat:mLat.value===''?null:Number(mLat.value),lng:mLng.value===''?null:Number(mLng.value),priority:mPriority.value,status:clean(mStatus.value),satisfaction:num(mSat.value),lastVisit:mLast.value,notes:clean(mNotes.value)};if(!rec.name)return toast('Nombre requerido','error');const dup=rec.rnc?state.companies.find(c=>c.id!==id&&normDoc(c.rnc)===normDoc(rec.rnc)):null;if(dup)return toast('Ya existe una empresa con ese RNC/Cédula: '+dup.name,'error');if(!CATS.includes(rec.category))return toast('Tipo/categoría requerida','error');if(rec.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rec.email))return toast('Email inválido','error');if((rec.lat!==null&&!Number.isFinite(rec.lat))||(rec.lng!==null&&!Number.isFinite(rec.lng)))return toast('Latitud/Longitud inválidas','error');if((rec.employees!==null&&!Number.isFinite(rec.employees))||(rec.beds!==null&&!Number.isFinite(rec.beds)))return toast('Empleados/Camas inválidos','error');if(id){const previous=state.companies.find(c=>c.id===id)||{};const merged={...previous,...rec,id};setState({companies:state.companies.map(c=>c.id===id?merged:c)});}else setState({companies:[...state.companies,rec]});closeModal();toast(id?'Registro actualizado en Empresas y CRM':'Empresa guardada','ok')}
 function openModal(title,body,foot){const el=document.getElementById('modal');el.className='modal-bg open';el.innerHTML='<div class="modal"><div class="modal-hd"><b>'+esc(title)+'</b><button class="btn small" data-close>×</button></div><div class="modal-body">'+body+'</div><div class="modal-ft">'+foot+'</div></div>'} function closeModal(){const el=document.getElementById('modal');el.className='modal-bg';el.innerHTML=''} function toast(msg,type){const el=document.createElement('div');el.textContent=msg;el.style.borderLeftColor=type==='error'?'var(--bad)':type==='ok'?'var(--ok)':'var(--brand)';document.getElementById('toast').appendChild(el);setTimeout(()=>el.remove(),3200)}
 function afterRender(){renderSchemaFields();renderCharts();renderMap();updateSaleTotal();bindCompanyImporter()}
 function renderCharts(){if(!window.Chart)return;const view=state.settings.view;if(view==='dashboard'){const labels=scopedCompanies().map(c=>c.name);const data=labels.map((_,i)=>state.sales.filter(s=>s.companyId===scopedCompanies()[i].id).reduce((a,s)=>a+s.total,0));chart('chartDash','bar',labels,data,'Unidades')} if(view==='twelve'){const by={};state.twelve.filter(t=>t.companyId&&inScope(t.companyId)).forEach(t=>{by[company(t.companyId)?.name||'Empresa']=(by[company(t.companyId)?.name||'Empresa']||0)+1});chart('chartEffort','doughnut',Object.keys(by),Object.values(by),'Tareas')} if(view==='bi'){const filter=document.getElementById('biCompany')?.value||'';const comps=filter?[company(filter)].filter(Boolean):scopedCompanies();chart('chartSales','bar',comps.map(c=>c.name),comps.map(c=>state.sales.filter(s=>s.companyId===c.id).reduce((a,s)=>a+s.total,0)),'Unidades');chart('chartForms','bar',comps.map(c=>c.name),comps.map(c=>avg(state.formResponses.filter(r=>r.companyId===c.id).map(r=>r.score).filter(x=>x!==null&&x!==undefined))),'Score');chart('chartVisits','bar',comps.map(c=>c.name),comps.map(c=>state.visits.filter(v=>v.companyId===c.id).length),'Visitas');chart('chartTwelve','bar',comps.map(c=>c.name),comps.map(c=>state.twelve.filter(t=>t.companyId===c.id).length),'Tareas')}} function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+Number(y),0)/a.length):0} function chart(id,type,labels,data,label){const el=document.getElementById(id);if(!el)return;charts.push(new Chart(el,{type,data:{labels,datasets:[{label,data}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut'}},scales:type==='doughnut'?{}:{y:{beginAtZero:true}}}}))}
@@ -238,8 +382,8 @@ function renderMap(){if(state.settings.view!=='planning'||!window.L)return;const
 function renderPublicForm(){const qs=new URLSearchParams(location.search);const schemaId=qs.get('publicForm')||'servicio';const comp=company(qs.get('companyId'))||state.companies[0];document.getElementById('root').innerHTML='<main class="public-shell"><section class="card" style="max-width:760px;margin:auto"><div class="card-title"><div><h2>'+esc(SCHEMAS[schemaId]?.title||'Formulario')+'</h2><p>Empresa: '+esc(comp?.name||'')+'</p></div></div><div id="publicFields">'+(SCHEMAS[schemaId]?.fields||[]).map(fieldHtml).join('')+'</div><button class="btn primary" data-submit-public="'+esc(schemaId)+'" data-company="'+esc(comp?.id||'')+'">Enviar formulario</button></section></main>';bind()} function submitPublic(schemaId,companyId){const comp=company(companyId);if(!comp)return;const schema=SCHEMAS[schemaId];const data={};document.querySelectorAll('[data-field]').forEach(el=>data[el.dataset.field]=el.value);const ratings=Object.entries(data).filter(([k,v])=>!isNaN(Number(v))&&schema.fields.find(f=>f[0]==='rating'&&f[1]===k)).map(x=>Number(x[1]));const score=ratings.length?Math.round(ratings.reduce((a,b)=>a+b,0)/ratings.length):null;const rec={id:uid('resp'),schemaId,schemaTitle:schema.title,companyId:comp.id,owner:comp.owner,category:comp.category,date:today(),score,data,source:'publicLink'};state.formResponses.push(rec);if(score!==null){state.companies=state.companies.map(c=>c.id===comp.id?{...c,satisfaction:score,lastVisit:today()}:c)}persist();downloadJson(rec,'respuesta-'+schemaId+'-'+comp.id+'.json');makePdf(schema.title,rec);document.getElementById('root').innerHTML='<main class="public-shell"><section class="card" style="max-width:760px;margin:auto;text-align:center"><h2>Formulario enviado</h2><p>Se guardó localmente y se descargó un respaldo JSON/PDF para trazabilidad.</p></section></main>'}
 function makePdf(title,rec){try{if(!window.jspdf)return;const doc=new jspdf.jsPDF();doc.text(title,14,16);doc.text('Empresa: '+(company(rec.companyId)?.name||''),14,26);doc.text('Fecha: '+rec.date,14,34);doc.text(JSON.stringify(rec.data,null,2).slice(0,1800),14,46,{maxWidth:180});doc.save(title.replace(/\s+/g,'_')+'.pdf')}catch(e){console.warn(e)}} function downloadJson(obj,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function bind(){document.addEventListener('click',globalClick,{once:true});document.addEventListener('change',globalChange,{once:true});document.addEventListener('input',globalInput,{once:true})}
-function globalClick(e){const t=e.target.closest('button,a');if(!t)return bind();try{if(t.dataset.openMenu!==undefined){document.body.classList.add('menu-open')}else if(t.dataset.closeMenu!==undefined){document.body.classList.remove('menu-open')}else if(t.dataset.view){document.body.classList.remove('menu-open');state.settings.view=t.dataset.view;schedule()}else if(t.dataset.browseCompanyImport!==undefined)document.getElementById('companyImportFile')?.click();else if(t.dataset.downloadCompanyTemplate!==undefined)downloadCompanyTemplate();else if(t.dataset.exportCompanies!==undefined)downloadJson(state.companies,'empresas-ge-business-hub.json');else if(t.dataset.newCompany!==undefined)openCompanyForm();else if(t.dataset.newBranch!==undefined)openBranchForm();else if(t.dataset.editBranch)openBranchForm(t.dataset.editBranch);else if(t.dataset.saveBranch!==undefined)saveBranch(t.dataset.saveBranch);else if(t.dataset.editCompany)openCompanyForm(t.dataset.editCompany);else if(t.dataset.saveCompany!==undefined)saveCompany(t.dataset.saveCompany);else if(t.dataset.close!==undefined)closeModal();else if(t.dataset.companyCrm){state.settings.companyId=t.dataset.companyCrm;state.settings.view='crm';schedule()}else if(t.dataset.companyForms){state.settings.companyId=t.dataset.companyForms;state.settings.view='forms';schedule()}else if(t.dataset.companyRoute){state.settings.companyId=t.dataset.companyRoute;state.settings.view='planning';const c=company(t.dataset.companyRoute);if(c){state.plans['Lunes']={city:c.city,companyIds:[c.id]}}schedule()}else if(t.dataset.companySale){state.settings.companyId=t.dataset.companySale;state.settings.view='sales';schedule()}else if(t.dataset.savePlan!==undefined)savePlanFromDom();else if(t.dataset.generateWeekRoute!==undefined){savePlanFromDom();toast('Ruta optimizada generada','ok')}else if(t.dataset.saveSale!==undefined)saveSale();else if(t.dataset.saveFormResponse!==undefined)saveFormResponse();else if(t.dataset.generateFormLink!==undefined)generateFormLink();else if(t.dataset.copy)copyFrom(t.dataset.copy);else if(t.dataset.waMsg!==undefined)sendGenerated('wa');else if(t.dataset.mailMsg!==undefined)sendGenerated('mail');else if(t.dataset.saveNetwork!==undefined)saveNetwork();else if(t.dataset.saveTwelve!==undefined)saveTwelve();else if(t.dataset.saveSettings!==undefined)saveSettings();else if(t.dataset.syncUp!==undefined)syncUp();else if(t.dataset.syncDown!==undefined)syncDown();else if(t.dataset.exportDb!==undefined)downloadJson(state,'ge-business-hub-pro-db.json');else if(t.dataset.resetDemo!==undefined){localStorage.removeItem(STORE);location.reload()}else if(t.dataset.submitPublic)submitPublic(t.dataset.submitPublic,t.dataset.company)}catch(err){console.error(err);toast('Error: '+err.message,'error')}bind()}
-function globalChange(e){const t=e.target;try{if(t.id==='ownerSelect'){state.settings.owner=t.value;state.settings.companyId='';schedule()}else if(t.id==='catFilter'){state.settings.category=t.value;schedule()}else if(t.id==='crmCompany'){state.settings.companyId=t.value;schedule()}else if(t.id==='formSchema')renderSchemaFields();else if(t.id==='biCompany'){charts.forEach(ch=>{try{ch.destroy()}catch(e){}});charts=[];renderCharts();}else if(t.matches('[data-plan-province]')){const day=t.dataset.planProvince;const p=state.plans[day]||{};state.plans[day]={...p,province:t.value,city:'',companyIds:[]};schedule()}else if(t.matches('[data-plan-city]')){savePlanFromDom(true)}else if(t.matches('[data-plan-check]')){savePlanFromDom(true)}else if(t.matches('[data-sale-company-option]')){selectSaleCompany(t)} }catch(err){console.error(err)}bind()} function globalInput(e){if(e.target.classList.contains('saleQty'))updateSaleTotal();else if(e.target.id==='saleCompanySearch')filterSaleCompanyList(e.target.value);bind()} function updateSaleTotal(){const el=document.getElementById('saleTotal');if(!el)return;el.value=[0,1,2,3].map(i=>num(document.getElementById('prod'+i)?.value)).reduce((a,b)=>a+b,0)}
+function globalClick(e){const t=e.target.closest('button,a');if(!t)return bind();try{if(t.dataset.openMenu!==undefined){document.body.classList.add('menu-open')}else if(t.dataset.closeMenu!==undefined){document.body.classList.remove('menu-open')}else if(t.dataset.view){document.body.classList.remove('menu-open');state.settings.view=t.dataset.view;schedule()}else if(t.dataset.browseCompanyImport!==undefined)document.getElementById('companyImportFile')?.click();else if(t.dataset.downloadCompanyTemplate!==undefined)downloadCompanyTemplate();else if(t.dataset.exportCompanies!==undefined)downloadJson(state.companies,'empresas-ge-business-hub.json');else if(t.dataset.newCompany!==undefined)openCompanyForm();else if(t.dataset.newBranch!==undefined)openBranchForm();else if(t.dataset.editBranch)openBranchForm(t.dataset.editBranch);else if(t.dataset.saveBranch!==undefined)saveBranch(t.dataset.saveBranch);else if(t.dataset.editCompany)openCompanyForm(t.dataset.editCompany);else if(t.dataset.saveCompany!==undefined)saveCompany(t.dataset.saveCompany);else if(t.dataset.close!==undefined)closeModal();else if(t.dataset.companyCrm){state.settings.companyId=t.dataset.companyCrm;state.settings.view='crm';schedule()}else if(t.dataset.companyForms){state.settings.companyId=t.dataset.companyForms;state.settings.view='forms';schedule()}else if(t.dataset.companyRoute){state.settings.companyId=t.dataset.companyRoute;state.settings.view='planning';const c=company(t.dataset.companyRoute);if(c){state.plans['Lunes']={city:c.city,companyIds:[c.id]}}schedule()}else if(t.dataset.companySale){state.settings.companyId=t.dataset.companySale;state.settings.view='sales';schedule()}else if(t.dataset.newSaleClient!==undefined)openQuickSaleClientForm();else if(t.dataset.editSaleCompany!==undefined)editSelectedSaleCompany();else if(t.dataset.saveQuickSaleClient!==undefined)saveQuickSaleClient();else if(t.dataset.savePlan!==undefined)savePlanFromDom();else if(t.dataset.generateWeekRoute!==undefined){savePlanFromDom();toast('Ruta optimizada generada','ok')}else if(t.dataset.saveSale!==undefined)saveSale();else if(t.dataset.saveFormResponse!==undefined)saveFormResponse();else if(t.dataset.generateFormLink!==undefined)generateFormLink();else if(t.dataset.copy)copyFrom(t.dataset.copy);else if(t.dataset.waMsg!==undefined)sendGenerated('wa');else if(t.dataset.mailMsg!==undefined)sendGenerated('mail');else if(t.dataset.saveNetwork!==undefined)saveNetwork();else if(t.dataset.saveTwelve!==undefined)saveTwelve();else if(t.dataset.saveSettings!==undefined)saveSettings();else if(t.dataset.syncUp!==undefined)syncUp();else if(t.dataset.syncDown!==undefined)syncDown();else if(t.dataset.exportDb!==undefined)downloadJson(state,'ge-business-hub-pro-db.json');else if(t.dataset.resetDemo!==undefined){localStorage.removeItem(STORE);location.reload()}else if(t.dataset.submitPublic)submitPublic(t.dataset.submitPublic,t.dataset.company)}catch(err){console.error(err);toast('Error: '+err.message,'error')}bind()}
+function globalChange(e){const t=e.target;try{if(t.id==='ownerSelect'){state.settings.owner=t.value;state.settings.companyId='';schedule()}else if(t.id==='catFilter'){state.settings.category=t.value;schedule()}else if(t.id==='crmCompany'){state.settings.companyId=t.value;schedule()}else if(t.id==='formSchema')renderSchemaFields();else if(t.id==='biCompany'){charts.forEach(ch=>{try{ch.destroy()}catch(e){}});charts=[];renderCharts();}else if(t.matches('[data-plan-province]')){const day=t.dataset.planProvince;const p=state.plans[day]||{};state.plans[day]={...p,province:t.value,city:'',companyIds:[]};schedule()}else if(t.matches('[data-plan-city]')){savePlanFromDom(true)}else if(t.matches('[data-plan-check]')){savePlanFromDom(true)}else if(t.matches('[data-sale-company-option]')){selectSaleCompany(t)} }catch(err){console.error(err)}bind()} function globalInput(e){if(e.target.classList.contains('saleQty'))updateSaleTotal();else if(e.target.id==='saleCompanySearch')filterSaleCompanyList(e.target.value);else if(['qClientName','qClientRnc','qClientEmail','qClientPhone'].includes(e.target.id))updateQuickClientValidation();bind()} function updateSaleTotal(){const el=document.getElementById('saleTotal');if(!el)return;el.value=[0,1,2,3].map(i=>num(document.getElementById('prod'+i)?.value)).reduce((a,b)=>a+b,0)}
 
 function selectSaleCompany(input){document.querySelectorAll('[data-sale-company-option]').forEach(x=>{if(x!==input)x.checked=false});if(input.checked){document.getElementById('saleCompany').value=input.value;state.settings.companyId=input.value;const c=company(input.value);const label=document.getElementById('saleSelectedLabel');if(label)label.textContent=c?.name||'Seleccionada'}else{document.getElementById('saleCompany').value='';const label=document.getElementById('saleSelectedLabel');if(label)label.textContent='Sin seleccionar'}}
 function filterSaleCompanyList(query){const wrap=document.querySelector('.sale-picker .check-list');if(!wrap)return;const selectedId=document.getElementById('saleCompany')?.value||'';wrap.querySelectorAll('[data-sale-row], .empty').forEach(n=>n.remove());wrap.insertAdjacentHTML('beforeend',salesCompanyOptions(compsForHealthSales(),selectedId,query))}
@@ -248,5 +392,98 @@ window.addEventListener('error',e=>{console.error(e.error||e.message);toast('Err
 render();
 })();
 </script>
+
+<script>
+(function(){
+  'use strict';
+  const isLocalHost = ['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+  const canUseServiceWorker = 'serviceWorker' in navigator && (location.protocol === 'https:' || isLocalHost);
+  let deferredInstallPrompt = null;
+
+  function notify(message, type){
+    const existingToast = document.getElementById('toast');
+    if(existingToast){
+      const item = document.createElement('div');
+      item.textContent = message;
+      if(type === 'ok') item.style.borderLeftColor = 'var(--ok)';
+      if(type === 'error') item.style.borderLeftColor = 'var(--bad)';
+      existingToast.appendChild(item);
+      setTimeout(function(){ item.remove(); }, 4200);
+      return;
+    }
+    console.log(message);
+  }
+
+  function createInstallButton(){
+    if(document.getElementById('pwaInstallBtn')) return document.getElementById('pwaInstallBtn');
+    const button = document.createElement('button');
+    button.id = 'pwaInstallBtn';
+    button.type = 'button';
+    button.className = 'pwa-install-btn';
+    button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">install_mobile</span><span>Instalar app</span>';
+    button.setAttribute('aria-label','Instalar GE Business Hub Pro');
+    button.addEventListener('click', async function(){
+      if(!deferredInstallPrompt) return;
+      button.classList.remove('show');
+      deferredInstallPrompt.prompt();
+      try{ await deferredInstallPrompt.userChoice; }catch(err){ console.warn(err); }
+      deferredInstallPrompt = null;
+    });
+    document.body.appendChild(button);
+    return button;
+  }
+
+  function showUpdateBanner(registration){
+    if(document.getElementById('pwaUpdateBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'pwaUpdateBanner';
+    banner.className = 'pwa-update-banner show';
+    banner.innerHTML = '<p>Hay una nueva versión de GE Business Hub Pro disponible.</p><button class="btn primary small" type="button">Actualizar</button>';
+    banner.querySelector('button').addEventListener('click', function(){
+      if(registration.waiting) registration.waiting.postMessage({type:'SKIP_WAITING'});
+      location.reload();
+    });
+    document.body.appendChild(banner);
+  }
+
+  window.addEventListener('beforeinstallprompt', function(event){
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    createInstallButton().classList.add('show');
+  });
+
+  window.addEventListener('appinstalled', function(){
+    const button = document.getElementById('pwaInstallBtn');
+    if(button) button.classList.remove('show');
+    deferredInstallPrompt = null;
+    notify('GE Business Hub Pro instalado correctamente.','ok');
+  });
+
+  if(canUseServiceWorker){
+    window.addEventListener('load', async function(){
+      try{
+        const registration = await navigator.serviceWorker.register('./sw.js', {scope:'./'});
+        registration.addEventListener('updatefound', function(){
+          const installingWorker = registration.installing;
+          if(!installingWorker) return;
+          installingWorker.addEventListener('statechange', function(){
+            if(installingWorker.state === 'installed' && navigator.serviceWorker.controller){
+              showUpdateBanner(registration);
+            }
+          });
+        });
+        navigator.serviceWorker.addEventListener('controllerchange', function(){
+          if(window.__gePwaRefreshing) return;
+          window.__gePwaRefreshing = true;
+          location.reload();
+        });
+      }catch(error){
+        console.warn('No se pudo registrar el Service Worker:', error);
+      }
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
