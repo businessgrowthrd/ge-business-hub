@@ -187,6 +187,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div style="font-size:11px;color:var(--txt2)" id="bsub">Ing. Gustavo Espaillat</div>
       </div>
       <div class="co-pills" id="co-pills"></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px">
+        <button onclick="gistSyncUp()" title="Subir datos a Gist" style="padding:5px 10px;font-size:12px;background:none;border:.5px solid var(--brd2);border-radius:var(--r)" id="sync-up-btn">
+          <i class="ti ti-cloud-upload" style="font-size:14px;vertical-align:-2px"></i>
+        </button>
+        <button onclick="gistSyncDown()" title="Descargar desde Gist" style="padding:5px 10px;font-size:12px;background:none;border:.5px solid var(--brd2);border-radius:var(--r)" id="sync-down-btn">
+          <i class="ti ti-cloud-download" style="font-size:14px;vertical-align:-2px"></i>
+        </button>
+        <button onclick="set({view:'sync'})" title="Configurar sincronización" style="padding:5px 10px;font-size:12px;background:none;border:.5px solid var(--brd2);border-radius:var(--r)">
+          <i class="ti ti-settings" style="font-size:14px;vertical-align:-2px"></i>
+        </button>
+      </div>
     </div>
     <div class="nav-tabs" id="nav-tabs"></div>
   </div>
@@ -288,7 +299,8 @@ let S = {
   routeCity:  'Santiago',
   routeSelected:[],
   actFilter:  'pending',
-  goalQ:      'Q2',
+  goalQ:      LS.g('goalQ') || 'Q2',
+  goalYear:   LS.g('goalYear') || new Date().getFullYear(),
   repTab:     'hemocura',
   encTab:     'nueva',
   encActive:  null,
@@ -296,6 +308,9 @@ let S = {
   ocrResult:  null,
   clientFilter:'',
   importData: null,
+  gistToken:  LS.g('gistToken') || '',
+  gistId:     LS.g('gistId')    || '',
+  syncStatus: '',
 };
 
 let modalOpen = null;
@@ -1159,12 +1174,15 @@ function okrPct(g){if(!g.krs||!g.krs.length)return 0;return Math.round(g.krs.red
 
 function renderOKR(){
   const cl=coColor();
-  const goals=S.goals.filter(g=>g.co===S.co&&g.quarter===S.goalQ);
+  const goals=S.goals.filter(g=>g.co===S.co&&g.quarter===S.goalQ&&(g.year||2025)===S.goalYear);
   return `
     <div class="sec-hd">
       <div class="sec-title"><i class="ti ti-target" style="color:${cl}"></i>OKRs · ${esc(co().label)}</div>
       <select onchange="set({goalQ:this.value})" style="width:auto;padding:4px 8px;font-size:12px">
-        ${['Q1','Q2','Q3','Q4'].map(q=>`<option value="${q}"${S.goalQ===q?' selected':''}>${q} 2025</option>`).join('')}
+        ${['Q1','Q2','Q3','Q4'].map(q=>`<option value="${q}"${S.goalQ===q?' selected':''}>${q}</option>`).join('')}
+      </select>
+      <select onchange="set({goalYear:parseInt(this.value)})" style="width:auto;padding:4px 8px;font-size:12px">
+        ${[2024,2025,2026,2027].map(y=>`<option value="${y}"${S.goalYear===y?' selected':''}>${y}</option>`).join('')}
       </select>
       <button class="btn-primary btn-sm" onclick="openModal('newGoal')">+ Objetivo</button>
     </div>
@@ -1173,7 +1191,10 @@ function renderOKR(){
       const p=okrPct(g);const pc=pctColor(p);
       return `<div class="card" style="margin-bottom:12px">
         <div class="row" style="margin-bottom:8px">
-          <div style="font-weight:500;flex:1;font-size:14px">${esc(g.title)}</div>
+          <div style="flex:1">
+        <div style="font-weight:500;font-size:14px">${esc(g.title)}</div>
+        <div style="font-size:11px;color:var(--txt2);margin-top:2px">${g.quarter||'Q?'} ${g.year||2025}</div>
+      </div>
           <span style="font-size:20px;font-weight:500;color:${pc}">${p}%</span>
           <button onclick="openModal('editGoal','${g.id}')" style="padding:3px 7px;font-size:11px"><i class="ti ti-edit"></i></button>
           <button class="btn-err" onclick="deleteGoal('${g.id}')" style="padding:3px 7px;font-size:11px"><i class="ti ti-trash" style="font-size:11px"></i></button>
@@ -1382,7 +1403,8 @@ function openModal(type,arg){
     html=`<div class="modal-title">${type==='newGoal'?'Nuevo objetivo OKR':'Editar objetivo'}</div>
       <div class="fr2">
         <div><label>Empresa</label><select id="m-co">${empOpts(g.co)}</select></div>
-        <div><label>Trimestre</label><select id="m-q">${['Q1','Q2','Q3','Q4'].map(q=>`<option value="${q}"${(g.quarter||S.goalQ)===q?' selected':''}>${q} 2025</option>`).join('')}</select></div>
+        <div><label>Trimestre</label><select id="m-q">${['Q1','Q2','Q3','Q4'].map(q=>`<option value="${q}"${(g.quarter||S.goalQ)===q?' selected':''}>${q}</option>`).join('')}</select></div>
+        <div><label>Año</label><select id="m-year">${[2024,2025,2026,2027].map(y=>`<option value="${y}"${(g.year||S.goalYear)===y?' selected':''}>${y}</option>`).join('')}</select></div>
       </div>
       <div class="fr"><label>Objetivo *</label><input id="m-title" value="${esc(g.title||'')}" placeholder="ej: Triplicar clientes activos en Santiago"></div>
       <div class="fr"><label>Descripción</label><textarea id="m-desc" rows="2">${esc(g.description||'')}</textarea></div>
@@ -1471,7 +1493,7 @@ function saveTPN(idOrNew){
 
 function saveGoal(idOrNew){
   const title=gv('m-title');if(!title){alert('Objetivo requerido');return}
-  const d={co:gv('m-co'),quarter:gv('m-q'),title,description:gv('m-desc')};
+  const d={co:gv('m-co'),quarter:gv('m-q'),year:parseInt(gv('m-year'))||S.goalYear,title,description:gv('m-desc')};
   if(idOrNew==='new')set({goals:[...S.goals,{id:uid(),...d,krs:[]}]});
   else set({goals:S.goals.map(g=>g.id===idOrNew?{...g,...d}:g)});
   closeModal();
@@ -2078,6 +2100,220 @@ function exportAllJSON(){
 ══════════════════════════════════════════════════════ */
 
 
+
+/* ══════════════════════════════════════════════════════
+   GITHUB GIST SYNC
+   · Guarda toda la base de datos en un Gist privado
+   · Restaura desde cualquier dispositivo con el mismo token
+══════════════════════════════════════════════════════ */
+
+const GIST_FILE = 'ge-hub-pro-data.json';
+
+function _ghHeaders(){
+  return {
+    'Authorization':'Bearer '+S.gistToken,
+    'Content-Type':'application/json',
+    'Accept':'application/vnd.github+json',
+    'X-GitHub-Api-Version':'2022-11-28',
+  };
+}
+
+function _packData(){
+  return JSON.stringify({
+    prospects:S.prospects, tasks:S.tasks, surveys:S.surveys,
+    tpn:S.tpn, goals:S.goals, competitors:S.competitors,
+    processes:S.processes, actions:S.actions, inspections:S.inspections,
+    savedAt:new Date().toISOString(), version:'2025',
+  });
+}
+
+function _unpackData(raw){
+  try{
+    const d=JSON.parse(raw);
+    const patch={};
+    ['prospects','tasks','surveys','tpn','goals','competitors','processes','actions','inspections']
+      .forEach(k=>{ if(Array.isArray(d[k])) patch[k]=d[k]; });
+    return patch;
+  }catch{ return null; }
+}
+
+function sSync(msg,ok){
+  S.syncStatus=msg;
+  const el=document.getElementById('sync-status');
+  if(el){
+    el.textContent=msg;
+    el.style.color=ok===false?'var(--err)':ok===true?'var(--ok)':'var(--txt2)';
+  }
+}
+
+async function gistSyncUp(){
+  if(!S.gistToken){ alert('Configura tu token de GitHub en Sincronización'); return; }
+  if(!navigator.onLine){ sSync('Sin conexión',false); return; }
+  sSync('Subiendo…');
+  const content=_packData();
+  try{
+    let res, body;
+    if(S.gistId){
+      /* PATCH existing gist */
+      res=await fetch('https://api.github.com/gists/'+S.gistId,{
+        method:'PATCH',
+        headers:_ghHeaders(),
+        body:JSON.stringify({files:{[GIST_FILE]:{content}}}),
+      });
+    } else {
+      /* POST new gist */
+      res=await fetch('https://api.github.com/gists',{
+        method:'POST',
+        headers:_ghHeaders(),
+        body:JSON.stringify({
+          description:'GE Business Hub Pro — datos sincronizados',
+          public:false,
+          files:{[GIST_FILE]:{content}},
+        }),
+      });
+    }
+    if(!res.ok){
+      const e=await res.json().catch(()=>({}));
+      const msg={401:'Token inválido — revisa el scope "gist"',403:'Sin permisos — el token necesita scope "gist"',404:'Gist no encontrado — borra el Gist ID y vuelve a subir'}[res.status]||('Error '+res.status);
+      sSync(msg,false); alert(msg); return;
+    }
+    body=await res.json();
+    if(!S.gistId){
+      S.gistId=body.id;
+      LS.s('gistId',body.id);
+      set({gistId:body.id});
+    }
+    const ts=new Date().toLocaleTimeString('es-DO');
+    sSync('Subido · '+ts,true);
+    renderSyncPanel();
+  }catch(e){
+    sSync('Error de red: '+e.message,false);
+  }
+}
+
+async function gistSyncDown(){
+  if(!S.gistToken){ alert('Configura tu token de GitHub'); return; }
+  if(!S.gistId){ alert('No hay Gist ID — primero sube los datos desde este dispositivo'); return; }
+  if(!navigator.onLine){ sSync('Sin conexión',false); return; }
+  sSync('Descargando…');
+  try{
+    const res=await fetch('https://api.github.com/gists/'+S.gistId+'?_='+Date.now(),{
+      headers:_ghHeaders(),
+    });
+    if(!res.ok){
+      const msg={401:'Token inválido',403:'Sin permisos',404:'Gist no encontrado — verifica el ID'}[res.status]||('Error '+res.status);
+      sSync(msg,false); alert(msg); return;
+    }
+    const body=await res.json();
+    const raw=body.files?.[GIST_FILE]?.content;
+    if(!raw){ sSync('Archivo no encontrado en el Gist',false); return; }
+    const patch=_unpackData(raw);
+    if(!patch){ sSync('Datos corruptos — no se pudo parsear',false); return; }
+    set(patch);
+    const ts=new Date().toLocaleTimeString('es-DO');
+    sSync('Restaurado · '+ts,true);
+    alert('Datos restaurados correctamente ✓');
+    renderSyncPanel();
+  }catch(e){
+    sSync('Error de red: '+e.message,false);
+  }
+}
+
+async function gistTestToken(){
+  const tok=gv('sync-token');
+  if(!tok){ alert('Pega tu token primero'); return; }
+  const el=document.getElementById('sync-test-result');
+  if(el) el.innerHTML='<span style="color:var(--txt2)">Probando…</span>';
+  try{
+    const res=await fetch('https://api.github.com/user',{headers:{'Authorization':'Bearer '+tok,'Accept':'application/vnd.github+json'}});
+    if(res.ok){
+      const u=await res.json();
+      if(el) el.innerHTML='<span style="color:var(--ok)"><i class="ti ti-check"></i> Válido · @'+u.login+'</span>';
+    } else {
+      if(el) el.innerHTML='<span style="color:var(--err)"><i class="ti ti-x"></i> Token inválido ('+res.status+')</span>';
+    }
+  }catch(e){
+    if(el) el.innerHTML='<span style="color:var(--err)">Error de red</span>';
+  }
+}
+
+function saveSyncConfig(){
+  const tok=gv('sync-token'); const gid=gv('sync-gist-id');
+  S.gistToken=tok; S.gistId=gid;
+  LS.s('gistToken',tok); LS.s('gistId',gid);
+  set({gistToken:tok, gistId:gid});
+  alert('Configuración guardada ✓');
+}
+
+function renderSyncPanel(){
+  const el=document.getElementById('sync-panel-content'); if(!el) return;
+  const cl=coColor();
+  const hasToken=!!S.gistToken;
+  const hasGist=!!S.gistId;
+  el.innerHTML=
+    '<div class="fr2">'+
+      '<div><label>GitHub Personal Access Token <span style="color:var(--err)">*</span></label>'+
+        '<input type="password" id="sync-token" value="'+esc(S.gistToken||'')+'" placeholder="ghp_...">'+
+        '<div style="font-size:11px;color:var(--txt2);margin-top:4px">'+
+          'Genera en <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" style="color:'+cl+'">github.com/settings/tokens</a> · scope requerido: <code>gist</code>'+
+        '</div>'+
+      '</div>'+
+      '<div><label>Gist ID <span style="font-size:10px;color:var(--txt2)">(vacío la primera vez)</span></label>'+
+        '<input id="sync-gist-id" value="'+esc(S.gistId||'')+'" placeholder="Se genera al subir por primera vez">'+
+        '<div style="font-size:11px;color:var(--txt2);margin-top:4px">Copia este ID en otros dispositivos para sincronizar</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">'+
+      '<button onclick="gistTestToken()" class="btn-sm"><i class="ti ti-plug" style="font-size:12px"></i> Probar token</button>'+
+      '<button onclick="saveSyncConfig()" class="btn-sm btn-primary" style="--co:'+cl+'"><i class="ti ti-device-floppy" style="font-size:12px"></i> Guardar</button>'+
+    '</div>'+
+    '<div id="sync-test-result" style="font-size:12.5px;margin-bottom:12px"></div>'+
+    '<hr>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+      '<button onclick="gistSyncUp()" class="btn-sm btn-primary" style="--co:'+cl+';'+(hasToken?'':'opacity:.5')+'" '+(hasToken?'':'disabled')+'>'+
+        '<i class="ti ti-cloud-upload" style="font-size:13px"></i> ↑ Subir datos'+
+      '</button>'+
+      '<button onclick="gistSyncDown()" class="btn-sm" style="'+(hasToken&&hasGist?'':'opacity:.5')+'" '+(hasToken&&hasGist?'':'disabled')+'>'+
+        '<i class="ti ti-cloud-download" style="font-size:13px"></i> ↓ Descargar / Restaurar'+
+      '</button>'+
+      '<span id="sync-status" style="font-size:12px;color:var(--txt2);display:flex;align-items:center">'+esc(S.syncStatus||'')+'</span>'+
+    '</div>'+
+    (hasGist?'<div style="margin-top:8px;font-size:11.5px;color:var(--txt2)"><i class="ti ti-link" style="font-size:12px"></i> Gist: <a href="https://gist.github.com/'+esc(S.gistId)+'" target="_blank" style="color:'+cl+'">'+esc(S.gistId)+'</a></div>':'');
+}
+
+
+
+
+function renderSyncView(){
+  const cl=coColor();
+  return '<div>'+
+    '<div class="sec-hd">'+
+      '<div class="sec-title"><i class="ti ti-cloud" style="color:'+cl+'"></i>Sincronización · GitHub Gist</div>'+
+    '</div>'+
+    '<div class="g2">'+
+      '<div class="card" id="sync-panel-content"></div>'+
+      '<div class="card">'+
+        '<div style="font-weight:500;margin-bottom:10px"><i class="ti ti-help" style="color:'+cl+';margin-right:6px"></i>Guía rápida</div>'+
+        '<div style="font-size:13px;color:var(--txt2);line-height:1.9">'+
+          '<div><strong>1.</strong> Ve a <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" style="color:'+cl+'">github.com → Settings → Tokens</a></div>'+
+          '<div><strong>2.</strong> Crea un token con scope <code>gist</code> · Expira: sin expiración</div>'+
+          '<div><strong>3.</strong> Pega el token en el campo de la izquierda → "Probar" → "Guardar"</div>'+
+          '<div><strong>4.</strong> Haz clic en <i class="ti ti-cloud-upload"></i> <strong>Subir datos</strong></div>'+
+          '<div><strong>5.</strong> Copia el <strong>Gist ID</strong> generado en tus otros dispositivos</div>'+
+          '<div style="margin-top:10px"><strong>En otros dispositivos:</strong></div>'+
+          '<div><strong>6.</strong> Abre la app → Sincronizar → Pega el mismo token y el Gist ID</div>'+
+          '<div><strong>7.</strong> Haz clic en <i class="ti ti-cloud-download"></i> <strong>Descargar</strong></div>'+
+        '</div>'+
+        '<div class="alert alert-g" style="margin-top:14px">'+
+          '<i class="ti ti-lock" style="flex-shrink:0;font-size:15px"></i>'+
+          '<div style="font-size:12.5px">El Gist se crea como <strong>privado</strong> — solo tú puedes verlo con tu token.</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+
 /* ═══════════════════════════════════════════
    KEYBOARD
 ═══════════════════════════════════════════ */
@@ -2108,6 +2344,7 @@ function render(){
     case 'clientes':     el.innerHTML=renderClientes();     break;
     case 'ocr':          el.innerHTML=renderOCR();          break;
     case 'importar':     el.innerHTML=renderImportar();     break;
+    case 'sync':         el.innerHTML=renderSyncView(); setTimeout(renderSyncPanel,0);  break;
   }
 }
 
