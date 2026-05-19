@@ -4,506 +4,301 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0A0F1E" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>GE Business Hub Pro</title>
-
+  <title>GE Business Hub Pro - Modular</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-
   <style>
-    :root{
-      --bg:#07091A; --surface:#0D1228; --surface2:#131936; --card:#171D3F; --hover:#1D2449; --input:#0F1530;
-      --border:#222A50; --border2:#2E3B70; --text:#EEF2FF; --muted:#92A0D4; --faint:#586694;
-      --accent:#4F6FFF; --accent2:#A78BFA; --ok:#34D399; --warn:#F59E0B; --err:#F87171; --info:#38BDF8;
-      --hem:#C84040; --far:#E87F20; --sof:#E83438; --equ:#00AEEF; --inf:#E8793A; --grp:#4F6FFF;
-      --shadow:0 16px 45px rgba(0,0,0,.35); --glow:0 0 0 3px rgba(79,111,255,.18),0 16px 45px rgba(79,111,255,.10);
-      --radius:18px; --sidebar:248px; --topbar:62px;
-    }
-    [data-theme="light"]{
-      --bg:#F2F5FF; --surface:#FFFFFF; --surface2:#F5F7FF; --card:#FFFFFF; --hover:#EEF2FF; --input:#FFFFFF;
-      --border:#DDE4FA; --border2:#C8D2F5; --text:#111827; --muted:#4A5578; --faint:#8792B3;
-      --shadow:0 16px 45px rgba(15,23,42,.08); --glow:0 0 0 3px rgba(79,111,255,.16),0 16px 45px rgba(79,111,255,.10);
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{font-size:14px;-webkit-tap-highlight-color:transparent}
-    body{font-family:Roboto,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top left,rgba(79,111,255,.16),transparent 34%),var(--bg);color:var(--text);min-height:100vh;line-height:1.45;overflow-x:hidden}
-    button,input,textarea,select{font:inherit}
-    button{cursor:pointer}
-    a{color:inherit}
-    .app{display:flex;min-height:100vh}
-    .sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:rgba(13,18,40,.94);backdrop-filter:blur(18px);border-right:1px solid var(--border);z-index:30;display:flex;flex-direction:column;transition:.25s ease}
-    [data-theme="light"] .sidebar{background:rgba(255,255,255,.94)}
-    .brand{height:var(--topbar);display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--border)}
-    .logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--active-color),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 0 24px rgba(79,111,255,.25)}
-    .brand small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
-    .side-search{padding:12px 14px 4px}.search{position:relative}.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}
-    .input,.select,.textarea{width:100%;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px;outline:none;transition:.16s ease}.textarea{min-height:90px;resize:vertical}.search .input{padding-left:35px}
-    .input:focus,.select:focus,.textarea:focus{border-color:var(--active-color);box-shadow:0 0 0 3px color-mix(in srgb,var(--active-color) 22%,transparent)}
-    .nav{padding:8px;overflow:auto;flex:1}.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);font-weight:900;padding:14px 10px 6px}.nav-btn{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--muted);border-radius:12px;padding:10px 11px;text-align:left;margin:2px 0;transition:.15s ease}.nav-btn:hover{background:var(--hover);color:var(--text)}.nav-btn.active{background:color-mix(in srgb,var(--active-color) 20%,transparent);color:var(--active-color);font-weight:700}.nav-btn i{font-size:18px}.badge{margin-left:auto;min-width:20px;height:20px;border-radius:99px;display:grid;place-items:center;padding:0 6px;background:var(--err);color:#fff;font-size:11px;font-weight:900}
-    .company-box{padding:12px 14px;border-top:1px solid var(--border)}.company-grid{display:grid;gap:7px}.company-btn{display:flex;align-items:center;gap:9px;border:1px solid transparent;background:transparent;color:var(--muted);padding:8px 10px;border-radius:12px;text-align:left}.company-btn:hover{background:var(--hover);color:var(--text)}.company-btn.active{border-color:var(--active-color);background:color-mix(in srgb,var(--active-color) 13%,transparent);color:var(--active-color);font-weight:700}.dot{width:9px;height:9px;border-radius:999px;background:var(--c)}
-    .sync-row{margin-top:10px;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:8px 10px;color:var(--muted);font-size:12px}.sync-dot{width:9px;height:9px;border-radius:99px;background:var(--ok);box-shadow:0 0 9px var(--ok)}
-    .content{flex:1;margin-left:var(--sidebar);min-height:100vh;transition:.25s ease}.topbar{position:sticky;top:0;height:var(--topbar);z-index:20;background:rgba(13,18,40,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 18px}[data-theme="light"] .topbar{background:rgba(255,255,255,.76)}
-    .main{width:min(1280px,100%);margin:0 auto;padding:18px}.title{font-size:20px;font-weight:900;display:flex;align-items:center;gap:10px}.subtitle{color:var(--muted);font-size:12px}.spacer{flex:1}.btn{border:1px solid var(--border);background:var(--surface2);color:var(--text);padding:9px 13px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s ease;text-decoration:none}.btn:hover{border-color:var(--border2);background:var(--hover)}.btn:active{transform:scale(.98)}.btn-primary{background:var(--active-color);border-color:var(--active-color);color:#fff;box-shadow:0 14px 26px color-mix(in srgb,var(--active-color) 20%,transparent)}.btn-danger{color:var(--err);border-color:color-mix(in srgb,var(--err) 38%,transparent);background:color-mix(in srgb,var(--err) 9%,transparent)}.btn-ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 38%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}.btn-warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 38%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}.btn-icon{width:40px;height:40px;padding:0}.btn-sm{padding:7px 10px;font-size:12px;border-radius:10px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 9px;color:var(--muted);font-size:12px;background:var(--surface2)}.pill.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}.pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 35%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}.pill.err{color:var(--err);border-color:color-mix(in srgb,var(--err) 35%,transparent);background:color-mix(in srgb,var(--err) 9%,transparent)}.pill.info{color:var(--info);border-color:color-mix(in srgb,var(--info) 35%,transparent);background:color-mix(in srgb,var(--info) 9%,transparent)}
-    .grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-auto{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 96%,#fff 4%),var(--card));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card.pad{padding:16px}.card-hd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.card-title{font-weight:900}.card-sub{font-size:12px;color:var(--muted);margin-top:2px}.kpi{position:relative;min-height:120px}.kpi::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--k,#4F6FFF)}.kpi-v{font-size:31px;font-weight:900;color:var(--k,#4F6FFF);letter-spacing:-1px}.kpi-l{color:var(--muted);font-size:12px}.kpi-foot{margin-top:10px;font-size:12px;color:var(--faint)}
-    .section-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}.section-head h1{font-size:24px;letter-spacing:-.5px}.section-head p{color:var(--muted);max-width:760px}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:780px}.table th{background:var(--surface2);color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.7px;text-align:left;padding:11px 12px;border-bottom:1px solid var(--border)}.table td{padding:12px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:middle}.table tr:last-child td{border-bottom:0}.table tbody tr:hover td{background:var(--hover);color:var(--text)}.actions{display:flex;gap:6px;flex-wrap:wrap}.form-grid{display:grid;gap:12px}.form-2{grid-template-columns:1fr 1fr}.form-3{grid-template-columns:1fr 1fr 1fr}.label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px;display:block}.modal-root{position:fixed;inset:0;z-index:80;display:none}.modal-root.show{display:block}.overlay{position:absolute;inset:0;background:rgba(5,7,18,.72);backdrop-filter:blur(8px)}.modal{position:relative;margin:34px auto;background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:0 24px 100px rgba(0,0,0,.55);width:min(780px,calc(100% - 28px));max-height:calc(100vh - 68px);overflow:auto}.modal-hd{position:sticky;top:0;background:var(--card);z-index:1;border-bottom:1px solid var(--border);padding:16px 18px;display:flex;align-items:center;gap:10px}.modal-body{padding:18px}.modal-ft{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--border);padding:13px 18px;display:flex;justify-content:flex-end;gap:8px}.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:100;display:grid;gap:8px}.toast{background:var(--surface2);border:1px solid var(--border2);border-left:4px solid var(--active-color);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);min-width:260px;animation:pop .18s ease}.toast.ok{border-left-color:var(--ok)}.toast.err{border-left-color:var(--err)}.toast.warn{border-left-color:var(--warn)}@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .pipeline{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:12px;overflow:auto}.stage{background:var(--surface2);border:1px solid var(--border);border-radius:18px;min-height:220px}.stage-hd{padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.deal{margin:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px;transition:.15s}.deal:hover{border-color:var(--active-color);box-shadow:var(--glow)}.deal strong{display:block;margin-bottom:6px}.deal small{color:var(--muted)}.timeline{display:grid;gap:10px}.tl{display:flex;gap:10px}.tl-icon{width:32px;height:32px;border-radius:12px;background:color-mix(in srgb,var(--active-color) 18%,transparent);color:var(--active-color);display:grid;place-items:center;flex:0 0 auto}.tl-body{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:10px 12px;flex:1}.tl-body small{color:var(--muted)}.map{height:420px;border-radius:18px;border:1px solid var(--border);overflow:hidden;background:var(--surface2)}.empty{text-align:center;color:var(--muted);padding:44px 16px}.empty i{font-size:44px;color:var(--faint);display:block;margin-bottom:8px}.drop{border:2px dashed var(--border2);border-radius:24px;background:var(--surface2);padding:34px;text-align:center;transition:.15s}.drop.drag{border-color:var(--active-color);background:color-mix(in srgb,var(--active-color) 13%,transparent)}.drop i{font-size:42px;color:var(--faint);display:block;margin-bottom:8px}.offline{position:fixed;top:var(--topbar);left:var(--sidebar);right:0;z-index:50;background:var(--warn);color:#111;padding:8px 14px;text-align:center;font-weight:900;transform:translateY(-100%);transition:.2s}.offline.show{transform:none}.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}.cmd{position:fixed;inset:0;z-index:85;display:none}.cmd.show{display:block}.cmd-box{position:relative;margin:80px auto;width:min(720px,calc(100% - 28px));background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:0 24px 100px rgba(0,0,0,.55);overflow:hidden}.cmd-results{max-height:420px;overflow:auto}.cmd-item{display:flex;gap:11px;align-items:center;padding:12px 16px;border-top:1px solid var(--border);cursor:pointer}.cmd-item:hover{background:var(--hover)}.risk-list{display:grid;gap:9px}.risk{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:11px}.risk i{font-size:20px}.metric-bar{height:7px;border-radius:99px;background:var(--border);overflow:hidden}.metric-bar span{display:block;height:100%;background:var(--active-color);border-radius:99px}.company-hero{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.avatar{width:44px;height:44px;border-radius:16px;background:color-mix(in srgb,var(--active-color) 20%,transparent);color:var(--active-color);display:grid;place-items:center;font-weight:900}.print-only{display:none}
-    @media(max-width:980px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3,.grid-2,.company-hero{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(5,220px)}}
-    @media(max-width:760px){.sidebar{transform:translateX(-105%)}.sidebar.open{transform:none}.mobile-overlay.show{display:block}.content{margin-left:0}.offline{left:0}.topbar{padding:0 12px}.main{padding:13px}.grid-4,.grid-auto{grid-template-columns:1fr 1fr}.form-2,.form-3{grid-template-columns:1fr}.section-head h1{font-size:21px}.hide-sm{display:none}.modal{margin:12px auto;max-height:calc(100vh - 24px)}}
-    @media(max-width:520px){.grid-4,.grid-auto{grid-template-columns:1fr}.kpi-v{font-size:28px}.btn span{display:none}.btn.keep span{display:inline}.title{font-size:16px}.subtitle{display:none}}
-    @media print{.sidebar,.topbar,.btn,.modal-root,.toast-wrap,.offline,.cmd,.mobile-overlay{display:none!important}.content{margin:0}.main{width:100%;padding:0}.card{box-shadow:none}.print-only{display:block}}
+    :root{--bg:#07091A;--surface:#0D1228;--surface2:#131936;--card:#171D3F;--hover:#1D2449;--input:#0F1530;--border:#222A50;--border2:#2E3B70;--text:#EEF2FF;--muted:#92A0D4;--faint:#586694;--accent:#4F6FFF;--accent2:#A78BFA;--ok:#34D399;--warn:#F59E0B;--err:#F87171;--info:#38BDF8;--hem:#C84040;--far:#E87F20;--sof:#E83438;--equ:#00AEEF;--inf:#E8793A;--grp:#4F6FFF;--shadow:0 16px 45px rgba(0,0,0,.35);--glow:0 0 0 3px rgba(79,111,255,.18),0 16px 45px rgba(79,111,255,.10);--radius:18px;--sidebar:258px;--topbar:62px;--active-color:var(--accent)}
+    [data-theme="light"]{--bg:#F2F5FF;--surface:#FFFFFF;--surface2:#F5F7FF;--card:#FFFFFF;--hover:#EEF2FF;--input:#FFFFFF;--border:#DDE4FA;--border2:#C8D2F5;--text:#111827;--muted:#4A5578;--faint:#8792B3;--shadow:0 16px 45px rgba(15,23,42,.08);--glow:0 0 0 3px rgba(79,111,255,.16),0 16px 45px rgba(79,111,255,.10)}
+    *{box-sizing:border-box;margin:0;padding:0}html{font-size:14px;-webkit-tap-highlight-color:transparent}body{font-family:Roboto,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top left,rgba(79,111,255,.16),transparent 34%),var(--bg);color:var(--text);min-height:100vh;line-height:1.45;overflow-x:hidden}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:inherit}.app{display:flex;min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:rgba(13,18,40,.94);backdrop-filter:blur(18px);border-right:1px solid var(--border);z-index:30;display:flex;flex-direction:column;transition:.25s ease}[data-theme="light"] .sidebar{background:rgba(255,255,255,.94)}.brand{height:var(--topbar);display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--border)}.logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--active-color),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 0 24px rgba(79,111,255,.25)}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:1px}.side-search{padding:12px 14px 4px}.search{position:relative}.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}.input,.select,.textarea{width:100%;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px;outline:none;transition:.16s ease}.textarea{min-height:90px;resize:vertical}.search .input{padding-left:35px}.input:focus,.select:focus,.textarea:focus{border-color:var(--active-color);box-shadow:0 0 0 3px color-mix(in srgb,var(--active-color) 22%,transparent)}.nav{padding:8px;overflow:auto;flex:1}.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);font-weight:900;padding:14px 10px 6px}.nav-btn{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--muted);border-radius:12px;padding:10px 11px;text-align:left;margin:2px 0;transition:.15s ease}.nav-btn:hover{background:var(--hover);color:var(--text)}.nav-btn.active{background:color-mix(in srgb,var(--active-color) 20%,transparent);color:var(--active-color);font-weight:700}.nav-btn i{font-size:18px}.badge{margin-left:auto;min-width:20px;height:20px;border-radius:99px;display:grid;place-items:center;padding:0 6px;background:var(--err);color:#fff;font-size:11px;font-weight:900}.company-box{padding:12px 14px;border-top:1px solid var(--border)}.company-grid{display:grid;gap:7px}.company-btn{display:flex;align-items:center;gap:9px;border:1px solid transparent;background:transparent;color:var(--muted);padding:8px 10px;border-radius:12px;text-align:left}.company-btn:hover{background:var(--hover);color:var(--text)}.company-btn.active{border-color:var(--active-color);background:color-mix(in srgb,var(--active-color) 13%,transparent);color:var(--active-color);font-weight:700}.dot{width:9px;height:9px;border-radius:999px;background:var(--c)}.sync-row{margin-top:10px;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:8px 10px;color:var(--muted);font-size:12px}.sync-dot{width:9px;height:9px;border-radius:99px;background:var(--ok);box-shadow:0 0 9px var(--ok)}.content{flex:1;margin-left:var(--sidebar);min-height:100vh;transition:.25s ease}.topbar{position:sticky;top:0;height:var(--topbar);z-index:20;background:rgba(13,18,40,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 18px}[data-theme="light"] .topbar{background:rgba(255,255,255,.76)}.main{width:min(1280px,100%);margin:0 auto;padding:18px}.title{font-size:20px;font-weight:900;display:flex;align-items:center;gap:10px}.subtitle{color:var(--muted);font-size:12px}.spacer{flex:1}.btn{border:1px solid var(--border);background:var(--surface2);color:var(--text);padding:9px 13px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s ease;text-decoration:none}.btn:hover{border-color:var(--border2);background:var(--hover)}.btn:active{transform:scale(.98)}.btn-primary{background:var(--active-color);border-color:var(--active-color);color:#fff;box-shadow:0 14px 26px color-mix(in srgb,var(--active-color) 20%,transparent)}.btn-danger{color:var(--err);border-color:color-mix(in srgb,var(--err) 38%,transparent);background:color-mix(in srgb,var(--err) 9%,transparent)}.btn-ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 38%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}.btn-warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 38%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}.btn-icon{width:40px;height:40px;padding:0}.btn-sm{padding:7px 10px;font-size:12px;border-radius:10px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 9px;color:var(--muted);font-size:12px;background:var(--surface2)}.pill.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}.pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 35%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}.pill.err{color:var(--err);border-color:color-mix(in srgb,var(--err) 35%,transparent);background:color-mix(in srgb,var(--err) 9%,transparent)}.pill.info{color:var(--info);border-color:color-mix(in srgb,var(--info) 35%,transparent);background:color-mix(in srgb,var(--info) 9%,transparent)}.grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-auto{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 96%,#fff 4%),var(--card));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card.pad{padding:16px}.card-hd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.card-title{font-weight:900}.card-sub{font-size:12px;color:var(--muted);margin-top:2px}.kpi{position:relative;min-height:120px}.kpi::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--k,#4F6FFF)}.kpi-v{font-size:31px;font-weight:900;color:var(--k,#4F6FFF);letter-spacing:-1px}.kpi-l{color:var(--muted);font-size:12px}.kpi-foot{margin-top:10px;font-size:12px;color:var(--faint)}.section-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}.section-head h1{font-size:24px;letter-spacing:-.5px}.section-head p{color:var(--muted);max-width:760px}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:780px}.table th{background:var(--surface2);color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.7px;text-align:left;padding:11px 12px;border-bottom:1px solid var(--border)}.table td{padding:12px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:middle}.table tr:last-child td{border-bottom:0}.table tbody tr:hover td{background:var(--hover);color:var(--text)}.actions{display:flex;gap:6px;flex-wrap:wrap}.form-grid{display:grid;gap:12px}.form-2{grid-template-columns:1fr 1fr}.form-3{grid-template-columns:1fr 1fr 1fr}.label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:5px;display:block}.modal-root{position:fixed;inset:0;z-index:80;display:none}.modal-root.show{display:block}.overlay{position:absolute;inset:0;background:rgba(5,7,18,.72);backdrop-filter:blur(8px)}.modal{position:relative;margin:34px auto;background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:0 24px 100px rgba(0,0,0,.55);width:min(780px,calc(100% - 28px));max-height:calc(100vh - 68px);overflow:auto}.modal-hd{position:sticky;top:0;background:var(--card);z-index:1;border-bottom:1px solid var(--border);padding:16px 18px;display:flex;align-items:center;gap:10px}.modal-body{padding:18px}.modal-ft{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--border);padding:13px 18px;display:flex;justify-content:flex-end;gap:8px}.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:100;display:grid;gap:8px}.toast{background:var(--surface2);border:1px solid var(--border2);border-left:4px solid var(--active-color);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);min-width:260px;animation:pop .18s ease}.toast.ok{border-left-color:var(--ok)}.toast.err{border-left-color:var(--err)}.toast.warn{border-left-color:var(--warn)}@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.pipeline{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:12px;overflow:auto}.stage{background:var(--surface2);border:1px solid var(--border);border-radius:18px;min-height:220px}.stage-hd{padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.deal{margin:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px;transition:.15s}.deal:hover{border-color:var(--active-color);box-shadow:var(--glow)}.deal strong{display:block;margin-bottom:6px}.deal small{color:var(--muted)}.timeline{display:grid;gap:10px}.tl{display:flex;gap:10px}.tl-icon{width:32px;height:32px;border-radius:12px;background:color-mix(in srgb,var(--active-color) 18%,transparent);color:var(--active-color);display:grid;place-items:center;flex:0 0 auto}.tl-body{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:10px 12px;flex:1}.tl-body small{color:var(--muted)}.map{height:420px;border-radius:18px;border:1px solid var(--border);overflow:hidden;background:var(--surface2)}.empty{text-align:center;color:var(--muted);padding:44px 16px}.empty i{font-size:44px;color:var(--faint);display:block;margin-bottom:8px}.drop{border:2px dashed var(--border2);border-radius:24px;background:var(--surface2);padding:34px;text-align:center;transition:.15s}.drop.drag{border-color:var(--active-color);background:color-mix(in srgb,var(--active-color) 13%,transparent)}.drop i{font-size:42px;color:var(--faint);display:block;margin-bottom:8px}.offline{position:fixed;top:var(--topbar);left:var(--sidebar);right:0;z-index:50;background:var(--warn);color:#111;padding:8px 14px;text-align:center;font-weight:900;transform:translateY(-100%);transition:.2s}.offline.show{transform:none}.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}.cmd{position:fixed;inset:0;z-index:85;display:none}.cmd.show{display:block}.cmd-box{position:relative;margin:80px auto;width:min(720px,calc(100% - 28px));background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:0 24px 100px rgba(0,0,0,.55);overflow:hidden}.cmd-results{max-height:420px;overflow:auto}.cmd-item{display:flex;gap:11px;align-items:center;padding:12px 16px;border-top:1px solid var(--border);cursor:pointer}.cmd-item:hover{background:var(--hover)}.risk-list{display:grid;gap:9px}.risk{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:11px}.risk i{font-size:20px}.metric-bar{height:7px;border-radius:99px;background:var(--border);overflow:hidden}.metric-bar span{display:block;height:100%;background:var(--active-color);border-radius:99px}.company-hero{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.avatar{width:44px;height:44px;border-radius:16px;background:color-mix(in srgb,var(--active-color) 20%,transparent);color:var(--active-color);display:grid;place-items:center;font-weight:900}.micro-card{border-left:3px solid var(--active-color)}.small{font-size:12px;color:var(--muted)}
+    @media(max-width:980px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3,.grid-2,.company-hero{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(5,220px)}}@media(max-width:760px){.sidebar{transform:translateX(-105%)}.sidebar.open{transform:none}.mobile-overlay.show{display:block}.content{margin-left:0}.offline{left:0}.topbar{padding:0 12px}.main{padding:13px}.grid-4,.grid-auto{grid-template-columns:1fr 1fr}.form-2,.form-3{grid-template-columns:1fr}.section-head h1{font-size:21px}.hide-sm{display:none}.modal{margin:12px auto;max-height:calc(100vh - 24px)}}@media(max-width:520px){.grid-4,.grid-auto{grid-template-columns:1fr}.kpi-v{font-size:28px}.btn span{display:none}.btn.keep span{display:inline}.title{font-size:16px}.subtitle{display:none}}
   </style>
 </head>
 <body>
   <div id="offline" class="offline"><i class="ti ti-wifi-off"></i> Sin conexión — los cambios quedan guardados localmente.</div>
-  <div id="mobileOverlay" class="mobile-overlay" onclick="toggleSidebar(false)"></div>
-  <div id="modalRoot" class="modal-root"></div>
-  <div id="toastWrap" class="toast-wrap"></div>
-
-  <div class="cmd" id="cmd" onclick="closeCommand(event)">
-    <div class="overlay"></div>
-    <div class="cmd-box" onclick="event.stopPropagation()">
-      <div style="padding:14px"><div class="search"><i class="ti ti-search"></i><input id="cmdInput" class="input" placeholder="Buscar empresa, oportunidad, tarea o módulo..." oninput="renderCommand()"></div></div>
-      <div id="cmdResults" class="cmd-results"></div>
-    </div>
-  </div>
-
-  <div class="app" id="app">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="logo">GE</div>
-        <div>
-          <strong>GE Business Hub Pro</strong>
-          <small id="activeCompanyLabel">Grupo GE</small>
-        </div>
-      </div>
-      <div class="side-search"><div class="search"><i class="ti ti-search"></i><input id="navSearch" class="input" placeholder="Buscar módulo..." oninput="renderNav()"></div></div>
-      <nav class="nav" id="nav"></nav>
-      <div class="company-box">
-        <div class="nav-section" style="padding:0 0 8px">Empresa activa</div>
-        <div class="company-grid" id="companySelector"></div>
-        <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Al día</span><button class="btn btn-sm" style="margin-left:auto" onclick="go('sync')"><i class="ti ti-cloud"></i></button></div>
-      </div>
-    </aside>
-
-    <div class="content">
-      <header class="topbar">
-        <button class="btn btn-icon" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
-        <div><div class="title" id="pageTitle">Dashboard BI</div><div class="subtitle" id="pageSubtitle">Centro de mando operativo</div></div>
-        <div class="spacer"></div>
-        <button class="btn btn-icon" title="Buscar Ctrl+K" onclick="openCommand()"><i class="ti ti-search"></i></button>
-        <button class="btn btn-icon" title="Tema" onclick="toggleTheme()"><i class="ti ti-sun-moon"></i></button>
-        <button class="btn btn-primary keep" onclick="quickAdd()"><i class="ti ti-plus"></i><span>Nuevo</span></button>
-      </header>
-      <main class="main" id="main"></main>
-    </div>
-  </div>
+  <div id="mobileOverlay" class="mobile-overlay" onclick="App.UI.toggleSidebar(false)"></div>
+  <div id="modalRoot" class="modal-root"></div><div id="toastWrap" class="toast-wrap"></div>
+  <div class="cmd" id="cmd" onclick="App.UI.closeCommand(event)"><div class="overlay"></div><div class="cmd-box" onclick="event.stopPropagation()"><div style="padding:14px"><div class="search"><i class="ti ti-search"></i><input id="cmdInput" class="input" placeholder="Buscar empresa, oportunidad, tarea o módulo..." oninput="App.UI.renderCommand()"></div></div><div id="cmdResults" class="cmd-results"></div></div></div>
+  <div class="app" id="app"><aside class="sidebar" id="sidebar"><div class="brand"><div class="logo">GE</div><div><strong>GE Business Hub Pro</strong><small id="activeCompanyLabel">Grupo GE</small></div></div><div class="side-search"><div class="search"><i class="ti ti-search"></i><input id="navSearch" class="input" placeholder="Buscar módulo..." oninput="App.UI.renderNav()"></div></div><nav class="nav" id="nav"></nav><div class="company-box"><div class="nav-section" style="padding:0 0 8px">Empresa activa</div><div class="company-grid" id="companySelector"></div><div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Al día</span><button class="btn btn-sm" style="margin-left:auto" onclick="App.Router.go('sync')"><i class="ti ti-cloud"></i></button></div></div></aside><div class="content"><header class="topbar"><button class="btn btn-icon" onclick="App.UI.toggleSidebar()"><i class="ti ti-menu-2"></i></button><div><div class="title" id="pageTitle">Dashboard BI</div><div class="subtitle" id="pageSubtitle">Centro de mando operativo</div></div><div class="spacer"></div><button class="btn btn-icon" title="Buscar Ctrl+K" onclick="App.UI.openCommand()"><i class="ti ti-search"></i></button><button class="btn btn-icon" title="Tema" onclick="App.UI.toggleTheme()"><i class="ti ti-sun-moon"></i></button><button class="btn btn-primary keep" onclick="App.UI.quickAdd()"><i class="ti ti-plus"></i><span>Nuevo</span></button></header><main class="main" id="main"></main></div></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLcE=" crossorigin=""></script>
   <script>
-    const STORE_KEY = 'ge_business_hub_pro_v1';
+  'use strict';
+  const App = (() => {
+    const STORE_KEY = 'ge_business_hub_pro_modular_v2';
     const todayISO = () => new Date().toISOString().slice(0,10);
     const uid = (prefix='id') => prefix + '_' + Math.random().toString(36).slice(2,9) + '_' + Date.now().toString(36).slice(-4);
     const money = n => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(Number(n||0));
     const fmtDate = d => d ? new Date(d+'T12:00:00').toLocaleDateString('es-DO',{day:'2-digit',month:'short',year:'numeric'}) : '—';
     const daysSince = d => d ? Math.floor((new Date() - new Date(d+'T12:00:00'))/86400000) : 999;
-    const escapeHTML = s => String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+    const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
 
-    const companies = {
-      grupo:{name:'Grupo GE', color:'var(--grp)'},
-      hemocura:{name:'Hemocura', color:'var(--hem)'},
-      farmaserv:{name:'FarmaServ', color:'var(--far)'},
-      sofa:{name:'SOFA', color:'var(--sof)'},
-      equilibrium:{name:'Equilibrium', color:'var(--equ)'},
-      infecq:{name:'INFECQ', color:'var(--inf)'}
+    const CompanyCatalog = {
+      grupo:{name:'Grupo GE', color:'var(--grp)'}, hemocura:{name:'Hemocura', color:'var(--hem)'}, farmaserv:{name:'FarmaServ', color:'var(--far)'}, sofa:{name:'SOFA', color:'var(--sof)'}, equilibrium:{name:'Equilibrium', color:'var(--equ)'}, infecq:{name:'INFECQ', color:'var(--inf)'}
     };
 
-    const navItems = [
-      ['Principal','dashboard','ti-layout-dashboard','Dashboard BI'],
-      ['Principal','empresas','ti-building-hospital','Empresas 360°'],
-      ['Principal','campo','ti-map-2','Campo & Rutas'],
-      ['Gestión','oportunidades','ti-briefcase','Oportunidades'],
-      ['Gestión','tareas','ti-clipboard-list','Tareas'],
-      ['Gestión','contactos','ti-address-book','Contactos'],
-      ['Análisis','formularios','ti-forms','Formularios'],
-      ['Análisis','reportes','ti-chart-bar','Reportes BI'],
-      ['Datos','importar','ti-file-import','Importar'],
-      ['Datos','sync','ti-cloud','Sync / Backup'],
-      ['Sistema','ajustes','ti-settings','Ajustes']
-    ];
+    const Bus = (() => {
+      const listeners = {};
+      return { on(event, fn){ (listeners[event] ||= []).push(fn); return () => listeners[event] = (listeners[event]||[]).filter(x=>x!==fn); }, emit(event, data){ (listeners[event]||[]).forEach(fn => fn(data)); } };
+    })();
 
-    const seedData = {
-      theme:'dark', view:'dashboard', activeCompany:'grupo', gist:{id:'',token:'',file:'ge-business-hub-pro.json'},
-      empresas:[
-        {id:'emp_1',grupo:'hemocura',nombre:'Hospital Metropolitano de Santiago',tipo:'Salud',sector:'Hospital privado',ciudad:'Santiago',direccion:'Av. Juan Pablo Duarte, Santiago',empleados:900,camas:380,telefono:'809-000-1000',email:'compras@homs.example',contacto:'Dra. Carmen Peña',prioridad:'Alta',latitud:19.4517,longitud:-70.6963,notas:'Alto potencial para hemoderivados y soluciones hospitalarias.',lastVisit:'2026-04-18',score:86,createdAt:'2026-01-10'},
-        {id:'emp_2',grupo:'hemocura',nombre:'Clínica Unión Médica',tipo:'Salud',sector:'Clínica privada',ciudad:'Santiago',direccion:'Santiago de los Caballeros',empleados:450,camas:180,telefono:'809-000-2000',email:'gerencia@union.example',contacto:'Lic. Ramón Díaz',prioridad:'Alta',latitud:19.4625,longitud:-70.6990,notas:'Requiere seguimiento comercial mensual.',lastVisit:'2026-03-28',score:72,createdAt:'2026-01-12'},
-        {id:'emp_3',grupo:'farmaserv',nombre:'Farmacia Carol - Zona Norte',tipo:'Retail',sector:'Farmacia',ciudad:'Santiago',direccion:'Santiago',empleados:85,camas:0,telefono:'809-000-3000',email:'compras@carol.example',contacto:'Ana Medina',prioridad:'Media',latitud:19.4452,longitud:-70.6811,notas:'Posible ruta para materiales gastables.',lastVisit:'2026-05-02',score:78,createdAt:'2026-02-03'},
-        {id:'emp_4',grupo:'sofa',nombre:'Zona Franca Tamboril',tipo:'Fabril',sector:'Manufactura',ciudad:'Tamboril',direccion:'Tamboril',empleados:1400,camas:0,telefono:'809-000-4000',email:'rrhh@zf.example',contacto:'Ing. Laura Gómez',prioridad:'Media',latitud:19.4859,longitud:-70.6117,notas:'Potencial para jornadas de donación y programas corporativos.',lastVisit:'2026-02-27',score:66,createdAt:'2026-02-20'},
-        {id:'emp_5',grupo:'equilibrium',nombre:'Centro Médico Cibao',tipo:'Salud',sector:'Centro médico',ciudad:'Santiago',direccion:'Centro de Santiago',empleados:300,camas:95,telefono:'809-000-5000',email:'info@cmc.example',contacto:'Dra. Isabel Rojas',prioridad:'Alta',latitud:19.4560,longitud:-70.6880,notas:'Evaluar satisfacción y capacidad por especialidad.',lastVisit:'2026-04-05',score:61,createdAt:'2026-03-01'},
-        {id:'emp_6',grupo:'infecq',nombre:'ONG Salud Comunitaria RD',tipo:'ONG',sector:'Salud comunitaria',ciudad:'Villa González',direccion:'Villa González',empleados:45,camas:0,telefono:'809-000-6000',email:'direccion@ong.example',contacto:'María Jiménez',prioridad:'Media',latitud:19.5408,longitud:-70.7894,notas:'Aliado para operativos comunitarios.',lastVisit:'2026-01-22',score:69,createdAt:'2026-03-10'}
-      ],
-      contactos:[
-        {id:'ct_1',empresaId:'emp_1',nombre:'Dra. Carmen Peña',cargo:'Dirección Médica',telefono:'809-111-1000',email:'cpena@homs.example',whatsapp:'8091111000'},
-        {id:'ct_2',empresaId:'emp_2',nombre:'Lic. Ramón Díaz',cargo:'Compras',telefono:'809-111-2000',email:'rdiaz@union.example',whatsapp:'8091112000'},
-        {id:'ct_3',empresaId:'emp_4',nombre:'Ing. Laura Gómez',cargo:'RRHH',telefono:'809-111-4000',email:'lgomez@zf.example',whatsapp:'8091114000'}
-      ],
-      oportunidades:[
-        {id:'op_1',empresaId:'emp_1',titulo:'Suministro mensual de hemoderivados',etapa:'Propuesta',valor:850000,probabilidad:65,cierre:'2026-06-15',notas:'Enviar propuesta técnica final.'},
-        {id:'op_2',empresaId:'emp_2',titulo:'Acuerdo de materiales gastables',etapa:'Negociación',valor:420000,probabilidad:55,cierre:'2026-06-05',notas:'Pendiente reunión con compras.'},
-        {id:'op_3',empresaId:'emp_4',titulo:'Jornada corporativa de donación',etapa:'Calificación',valor:120000,probabilidad:35,cierre:'2026-07-01',notas:'Presentar propuesta social.'},
-        {id:'op_4',empresaId:'emp_5',titulo:'Evaluación de servicio e insumos',etapa:'Prospecto',valor:260000,probabilidad:25,cierre:'2026-06-28',notas:'Completar formulario inicial.'}
-      ],
-      tareas:[
-        {id:'ta_1',empresaId:'emp_1',opId:'op_1',titulo:'Enviar propuesta técnica y económica',tipo:'Propuesta',prioridad:'Alta',estado:'Pendiente',vence:'2026-05-22'},
-        {id:'ta_2',empresaId:'emp_2',opId:'op_2',titulo:'Llamar a compras para reunión',tipo:'Seguimiento',prioridad:'Alta',estado:'Pendiente',vence:'2026-05-19'},
-        {id:'ta_3',empresaId:'emp_5',opId:'op_4',titulo:'Enviar encuesta de evaluación del servicio',tipo:'Formulario',prioridad:'Media',estado:'Pendiente',vence:'2026-05-24'},
-        {id:'ta_4',empresaId:'emp_6',opId:'',titulo:'Coordinar visita en Villa González',tipo:'Ruta',prioridad:'Media',estado:'Completada',vence:'2026-05-16'}
-      ],
-      visitas:[
-        {id:'vi_1',empresaId:'emp_1',fecha:'2026-04-18',motivo:'Seguimiento comercial',resultado:'Interés alto. Solicitaron propuesta formal.',proximo:'Enviar propuesta.'},
-        {id:'vi_2',empresaId:'emp_2',fecha:'2026-03-28',motivo:'Presentación de catálogo',resultado:'Compras evaluará precios.',proximo:'Llamada de seguimiento.'},
-        {id:'vi_3',empresaId:'emp_5',fecha:'2026-04-05',motivo:'Evaluación inicial',resultado:'Detectada oportunidad de mejora en tiempos de entrega.',proximo:'Enviar encuesta.'}
-      ],
-      formularios:[
-        {id:'fo_1',empresaId:'emp_5',tipo:'Evaluación del Servicio',fecha:'2026-04-05',score:61,accion:'Crear plan de mejora por satisfacción baja.'},
-        {id:'fo_2',empresaId:'emp_1',tipo:'TPN',fecha:'2026-04-18',score:86,accion:'Mantener seguimiento mensual.'}
-      ],
-      ventas:[
-        {id:'ve_1',empresaId:'emp_1',fecha:'2026-04-20',producto:'Hemoderivados',monto:320000},
-        {id:'ve_2',empresaId:'emp_2',fecha:'2026-04-25',producto:'Material gastable',monto:145000},
-        {id:'ve_3',empresaId:'emp_3',fecha:'2026-05-03',producto:'Insumos',monto:88000}
-      ]
-    };
-
-    let state = load();
-    let mapInstance = null;
-
-    function load(){
-      try{
-        const raw = localStorage.getItem(STORE_KEY);
-        if(!raw) return structuredClone(seedData);
-        const parsed = JSON.parse(raw);
-        return {...structuredClone(seedData), ...parsed};
-      }catch(e){ console.warn(e); return structuredClone(seedData); }
-    }
-    function save(){localStorage.setItem(STORE_KEY, JSON.stringify(state)); renderSync();}
-    function setState(patch){state = {...state, ...patch}; save(); render();}
-    function filteredEmpresas(){return state.activeCompany === 'grupo' ? state.empresas : state.empresas.filter(e=>e.grupo===state.activeCompany)}
-    function byId(list,id){return state[list].find(x=>x.id===id)}
-    function empresaName(id){return byId('empresas',id)?.nombre || 'Sin empresa'}
-    function empresa(id){return byId('empresas',id)}
-    function activeColor(){return companies[state.activeCompany]?.color || 'var(--accent)'}
-
-    function render(){
-      document.body.dataset.theme = state.theme || 'dark';
-      document.documentElement.style.setProperty('--active-color', activeColor());
-      renderNav(); renderCompanySelector(); renderTopbar(); renderSync();
-      const fn = views[state.view] || views.dashboard; fn();
-      toggleSidebar(false);
-    }
-    function renderTopbar(){
-      const item = navItems.find(x=>x[1]===state.view);
-      document.getElementById('pageTitle').innerHTML = `<i class="ti ${item?.[2]||'ti-layout-dashboard'}"></i> ${item?.[3]||'Dashboard BI'}`;
-      document.getElementById('pageSubtitle').textContent = companies[state.activeCompany]?.name + ' · CRM móvil con BI operativo';
-      document.getElementById('activeCompanyLabel').textContent = companies[state.activeCompany]?.name;
-    }
-    function renderNav(){
-      const q = (document.getElementById('navSearch')?.value || '').toLowerCase();
-      const pending = state.tareas.filter(t=>t.estado!=='Completada').length;
-      let html='', current='';
-      navItems.filter(i=>i[3].toLowerCase().includes(q) || i[0].toLowerCase().includes(q)).forEach(([section,view,icon,label])=>{
-        if(section!==current){current=section; html += `<div class="nav-section">${section}</div>`;}
-        const badge = view==='tareas' && pending ? `<span class="badge">${pending}</span>` : '';
-        html += `<button class="nav-btn ${state.view===view?'active':''}" onclick="go('${view}')"><i class="ti ${icon}"></i><span>${label}</span>${badge}</button>`;
-      });
-      document.getElementById('nav').innerHTML = html || `<div class="empty">Sin módulos</div>`;
-    }
-    function renderCompanySelector(){
-      document.getElementById('companySelector').innerHTML = Object.entries(companies).map(([key,c])=>`<button class="company-btn ${state.activeCompany===key?'active':''}" onclick="setCompany('${key}')"><span class="dot" style="--c:${c.color}"></span>${c.name}</button>`).join('');
-    }
-    function renderSync(){
-      const pending = state.tareas.filter(t=>t.estado!=='Completada' && daysSince(t.vence)>0).length;
-      document.getElementById('syncDot').style.background = navigator.onLine ? 'var(--ok)' : 'var(--warn)';
-      document.getElementById('syncLabel').textContent = navigator.onLine ? `Al día · ${pending} vencidas` : 'Offline local';
-    }
-    function go(view){state.view=view; save(); render();}
-    function setCompany(key){state.activeCompany=key; save(); render();}
-    function toggleTheme(){state.theme = state.theme==='dark'?'light':'dark'; save(); render();}
-    function toggleSidebar(force){const sb=document.getElementById('sidebar'), ov=document.getElementById('mobileOverlay'); const open = typeof force==='boolean'?force:!sb.classList.contains('open'); sb.classList.toggle('open',open); ov.classList.toggle('show',open);}
-    window.addEventListener('online',()=>{document.getElementById('offline').classList.remove('show');renderSync()});
-    window.addEventListener('offline',()=>{document.getElementById('offline').classList.add('show');renderSync()});
-
-    const views = {
-      dashboard(){
-        const emp = filteredEmpresas();
-        const empIds = new Set(emp.map(e=>e.id));
-        const ops = state.oportunidades.filter(o=>empIds.has(o.empresaId));
-        const tareas = state.tareas.filter(t=>empIds.has(t.empresaId));
-        const ventas = state.ventas.filter(v=>empIds.has(v.empresaId));
-        const totalVentas = ventas.reduce((a,b)=>a+Number(b.monto||0),0);
-        const pipeline = ops.reduce((a,b)=>a+Number(b.valor||0),0);
-        const vencidas = tareas.filter(t=>t.estado!=='Completada' && daysSince(t.vence)>0).length;
-        const riesgo = emp.filter(e=>daysSince(e.lastVisit)>45 || Number(e.score||0)<70).length;
-        main(`
-          <div class="section-head"><div><h1>Centro de mando BI</h1><p>Visión consolidada de ventas, oportunidades, visitas, riesgos y próxima mejor acción.</p></div><div class="spacer"></div><button class="btn btn-primary keep" onclick="quickAdd()"><i class="ti ti-plus"></i><span>Crear acción</span></button></div>
-          <div class="grid grid-4">
-            ${kpi('Ventas registradas', money(totalVentas), 'ti-cash', 'var(--ok)', 'Histórico cargado')}
-            ${kpi('Pipeline activo', money(pipeline), 'ti-briefcase', 'var(--active-color)', `${ops.length} oportunidades`)}
-            ${kpi('Tareas vencidas', vencidas, 'ti-alert-triangle', 'var(--warn)', 'Requieren atención')}
-            ${kpi('Cuentas en riesgo', riesgo, 'ti-heart-rate-monitor', 'var(--err)', 'Por visita o satisfacción')}
-          </div>
-          <div class="grid grid-2" style="margin-top:14px">
-            <div class="card"><div class="card-hd"><div><div class="card-title">Próxima mejor acción</div><div class="card-sub">Priorización por tareas, potencial, riesgo y última visita</div></div></div><div class="card pad">${nextActions(emp,tareas,ops)}</div></div>
-            <div class="card"><div class="card-hd"><div><div class="card-title">Riesgos comerciales</div><div class="card-sub">Clientes que necesitan intervención</div></div></div><div class="card pad">${riskList(emp)}</div></div>
-          </div>
-          <div class="grid grid-2" style="margin-top:14px">
-            <div class="card"><div class="card-hd"><div><div class="card-title">Funnel de oportunidades</div><div class="card-sub">Valor por etapa</div></div></div><div class="card pad">${funnel(ops)}</div></div>
-            <div class="card"><div class="card-hd"><div><div class="card-title">Empresas estratégicas</div><div class="card-sub">Por potencial y prioridad</div></div></div><div class="card pad">${strategicTable(emp)}</div></div>
-          </div>
-        `);
-      },
-      empresas(){
-        const emp = filteredEmpresas();
-        main(`
-          <div class="section-head"><div><h1>Empresas 360°</h1><p>Base maestra de clientes y prospectos. Desde aquí se conectan rutas, ventas, contactos, tareas, formularios y oportunidades.</p></div><div class="spacer"></div><button class="btn" onclick="exportJSON('empresas')"><i class="ti ti-download"></i>Exportar</button><button class="btn btn-primary keep" onclick="openEmpresaForm()"><i class="ti ti-building-plus"></i><span>Nueva empresa</span></button></div>
-          <div class="card pad" style="margin-bottom:14px"><div class="grid grid-4"><div class="search"><i class="ti ti-search"></i><input id="empSearch" class="input" placeholder="Buscar por nombre, ciudad, sector..." oninput="renderEmpresaTable()"></div><select id="empTipo" class="select" onchange="renderEmpresaTable()"><option value="">Todos los tipos</option><option>Salud</option><option>Fabril</option><option>Retail</option><option>Servicios</option><option>ONG</option></select><select id="empPrioridad" class="select" onchange="renderEmpresaTable()"><option value="">Todas las prioridades</option><option>Alta</option><option>Media</option><option>Baja</option></select><button class="btn" onclick="renderEmpresaTable()"><i class="ti ti-refresh"></i>Actualizar</button></div></div>
-          <div id="empresaTable"></div>
-        `);
-        renderEmpresaTable();
-      },
-      campo(){
-        const emp = filteredEmpresas().filter(e=>e.latitud && e.longitud);
-        main(`
-          <div class="section-head"><div><h1>Campo & Rutas</h1><p>Planifica visitas usando geografía, tiempo desde última visita, prioridad y potencial. Cada visita actualiza el CRM.</p></div><div class="spacer"></div><button class="btn btn-primary keep" onclick="openVisitaForm()"><i class="ti ti-map-pin-plus"></i><span>Registrar visita</span></button></div>
-          <div class="company-hero">
-            <div class="card"><div class="card-hd"><div><div class="card-title">Mapa operativo</div><div class="card-sub">Clientes y prospectos geolocalizados</div></div></div><div style="padding:14px"><div id="map" class="map"></div></div></div>
-            <div class="card"><div class="card-hd"><div><div class="card-title">Ruta sugerida</div><div class="card-sub">Orden por urgencia comercial</div></div></div><div class="card pad">${routeList(emp)}</div></div>
-          </div>
-          <div class="card" style="margin-top:14px"><div class="card-hd"><div><div class="card-title">Historial reciente de visitas</div><div class="card-sub">Acciones en campo registradas</div></div></div><div class="card pad">${visitTimeline()}</div></div>
-        `);
-        setTimeout(()=>renderMap(emp),80);
-      },
-      oportunidades(){
-        const empIds = new Set(filteredEmpresas().map(e=>e.id));
-        const ops = state.oportunidades.filter(o=>empIds.has(o.empresaId));
-        main(`
-          <div class="section-head"><div><h1>Oportunidades</h1><p>Pipeline comercial conectado a empresas, tareas y ventas estimadas.</p></div><div class="spacer"></div><button class="btn btn-primary keep" onclick="openOportunidadForm()"><i class="ti ti-plus"></i><span>Nueva oportunidad</span></button></div>
-          <div class="pipeline">${pipeline(ops)}</div>
-        `);
-      },
-      tareas(){
-        const empIds = new Set(filteredEmpresas().map(e=>e.id));
-        const tareas = state.tareas.filter(t=>empIds.has(t.empresaId));
-        main(`
-          <div class="section-head"><div><h1>Tareas y seguimiento</h1><p>Gestión diaria de llamadas, propuestas, formularios, cobros, rutas y próximas acciones.</p></div><div class="spacer"></div><button class="btn btn-primary keep" onclick="openTareaForm()"><i class="ti ti-plus"></i><span>Nueva tarea</span></button></div>
-          <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Estado</th><th>Tarea</th><th>Empresa</th><th>Prioridad</th><th>Vence</th><th>Tipo</th><th>Acciones</th></tr></thead><tbody>${tareas.map(t=>taskRow(t)).join('') || emptyRow(7,'No hay tareas')}</tbody></table></div></div>
-        `);
-      },
-      contactos(){
-        const empIds = new Set(filteredEmpresas().map(e=>e.id));
-        const contactos = state.contactos.filter(c=>empIds.has(c.empresaId));
-        main(`<div class="section-head"><div><h1>Contactos</h1><p>Decisores y personas clave enlazadas a empresas.</p></div><div class="spacer"></div><button class="btn btn-primary keep" onclick="openContactoForm()"><i class="ti ti-user-plus"></i><span>Nuevo contacto</span></button></div><div class="grid grid-auto">${contactos.map(contactCard).join('') || empty('No hay contactos')}</div>`);
-      },
-      formularios(){
-        const empIds = new Set(filteredEmpresas().map(e=>e.id));
-        const forms = state.formularios.filter(f=>empIds.has(f.empresaId));
-        main(`<div class="section-head"><div><h1>Formularios operativos</h1><p>Evaluación del servicio, TPN e inspección de sucursales con impacto directo en score, alertas y tareas.</p></div><div class="spacer"></div><button class="btn btn-primary keep" onclick="openFormularioForm()"><i class="ti ti-forms"></i><span>Registrar formulario</span></button></div><div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Tipo</th><th>Empresa</th><th>Fecha</th><th>Score</th><th>Acción sugerida</th><th>Mensaje</th></tr></thead><tbody>${forms.map(f=>`<tr><td>${escapeHTML(f.tipo)}</td><td>${escapeHTML(empresaName(f.empresaId))}</td><td>${fmtDate(f.fecha)}</td><td><span class="pill ${f.score<70?'err':'ok'}">${f.score}</span></td><td>${escapeHTML(f.accion)}</td><td><button class="btn btn-sm" onclick="copyFormMessage('${f.id}')"><i class="ti ti-copy"></i>Copiar</button></td></tr>`).join('') || emptyRow(6,'No hay formularios')}</tbody></table></div></div>`);
-      },
-      reportes(){
-        const emp = filteredEmpresas();
-        const empIds = new Set(emp.map(e=>e.id));
-        const ventas = state.ventas.filter(v=>empIds.has(v.empresaId));
-        const ops = state.oportunidades.filter(o=>empIds.has(o.empresaId));
-        main(`<div class="section-head"><div><h1>Reportes BI</h1><p>Análisis simple para tomar decisiones: sectores, ciudades, ventas y potencial.</p></div><div class="spacer"></div><button class="btn" onclick="window.print()"><i class="ti ti-printer"></i>Imprimir</button></div><div class="grid grid-2"><div class="card"><div class="card-hd"><div><div class="card-title">Ventas por empresa</div><div class="card-sub">Histórico registrado</div></div></div><div class="card pad">${salesReport(ventas)}</div></div><div class="card"><div class="card-hd"><div><div class="card-title">Potencial por sector</div><div class="card-sub">Camas + empleados como señal de oportunidad</div></div></div><div class="card pad">${sectorPotential(emp)}</div></div></div><div class="card" style="margin-top:14px"><div class="card-hd"><div><div class="card-title">Reporte ejecutivo</div><div class="card-sub">Resumen accionable</div></div></div><div class="card pad">${executiveReport(emp,ops,ventas)}</div></div>`);
-      },
-      importar(){
-        main(`<div class="section-head"><div><h1>Importar datos</h1><p>Importa empresas desde JSON. El sistema tolera campos faltantes y conserva estructura para CRM.</p></div></div><div class="card pad"><div id="drop" class="drop" ondrop="handleDrop(event)" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')"><i class="ti ti-file-upload"></i><strong>Arrastra un archivo JSON aquí</strong><p style="color:var(--muted);margin-top:6px">También puedes pegar JSON abajo. Campos sugeridos: Nombre, Tipo, Sector, Ciudad, Dirección, Empleados, Camas, Teléfono, Email, Contacto, Prioridad, Latitud, Longitud, Notas.</p></div><div style="margin-top:14px"><textarea id="jsonPaste" class="textarea" placeholder='[{"Nombre":"Hospital X","Tipo":"Salud","Ciudad":"Santiago"}]'></textarea></div><div class="actions" style="margin-top:12px"><button class="btn btn-primary keep" onclick="importPastedJSON()"><i class="ti ti-database-import"></i><span>Importar JSON</span></button><button class="btn" onclick="downloadTemplate()"><i class="ti ti-download"></i>Plantilla</button></div><div id="importResult" style="margin-top:14px"></div></div>`);
-      },
-      sync(){
-        const lastSync = state.gist?.lastSync ? new Date(state.gist.lastSync).toLocaleString('es-DO') : 'Nunca';
-        main(`<div class="section-head"><div><h1>Sync / Backup</h1><p>Sincronización manual para evaluar la herramienta sin backend. Ahora incluye creación de Gist, validación de token, mensajes de error claros y backup sin exponer tu token.</p></div></div>
-        <div class="grid grid-2">
-          <div class="card pad"><h3>Backup local</h3><p style="color:var(--muted);margin:8px 0 14px">Descarga o restaura todos los datos del CRM. El export elimina credenciales sensibles.</p><div class="actions"><button class="btn btn-primary keep" onclick="exportJSON('all')"><i class="ti ti-download"></i><span>Exportar todo</span></button><button class="btn" onclick="document.getElementById('restoreFile').click()"><i class="ti ti-upload"></i>Restaurar</button><input id="restoreFile" type="file" accept="application/json" hidden onchange="restoreBackup(event)"></div></div>
-          <div class="card pad"><h3>GitHub Gist</h3><p style="color:var(--muted);margin:8px 0 14px">Usa un token con permiso <strong>gist</strong>. Puedes crear el Gist desde aquí o pegar un Gist ID existente.</p>
-            <div class="form-grid">
-              <div><label class="label">Gist ID</label><input class="input" id="gistId" value="${escapeHTML(state.gist?.id||'')}" oninput="updateGistSetting('id', this.value)" placeholder="Ej: a1b2c3d4..."></div>
-              <div><label class="label">Nombre del archivo dentro del Gist</label><input class="input" id="gistFile" value="${escapeHTML(state.gist?.file||'ge-business-hub-pro.json')}" oninput="updateGistSetting('file', this.value)"></div>
-              <div style="grid-column:1/-1"><label class="label">Token GitHub</label><input class="input" id="gistToken" type="password" value="${escapeHTML(state.gist?.token||'')}" oninput="updateGistSetting('token', this.value)" placeholder="github_pat_... o ghp_..."><div style="font-size:12px;color:var(--muted);margin-top:6px">El token se guarda solo en este navegador. No se sube al Gist ni al backup.</div></div>
-              <div class="actions" style="grid-column:1/-1"><button class="btn btn-ok keep" onclick="gistCreate()"><i class="ti ti-plus"></i><span>Crear Gist</span></button><button class="btn btn-primary keep" onclick="gistUpload()"><i class="ti ti-cloud-upload"></i><span>Subir datos</span></button><button class="btn keep" onclick="gistDownload()"><i class="ti ti-cloud-download"></i><span>Bajar datos</span></button><button class="btn" onclick="gistTest()"><i class="ti ti-shield-check"></i>Probar conexión</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="card pad" style="margin-top:14px"><h3>Estado de sincronización</h3><div id="gistStatus" style="color:var(--muted);margin-top:8px;line-height:1.7">Última sync: ${escapeHTML(lastSync)}<br>Datos locales: ${state.empresas.length} empresas, ${state.oportunidades.length} oportunidades, ${state.tareas.length} tareas, ${state.visitas.length} visitas.<br>${state.gist?.id ? 'Gist configurado: '+escapeHTML(state.gist.id) : 'Gist no configurado.'}</div></div>`);
-      },
-      ajustes(){
-        main(`<div class="section-head"><div><h1>Ajustes</h1><p>Configuración visual y reinicio de datos.</p></div></div><div class="grid grid-2"><div class="card pad"><h3>Apariencia</h3><p style="color:var(--muted);margin:8px 0 14px">Tema actual: ${state.theme}</p><button class="btn" onclick="toggleTheme()"><i class="ti ti-sun-moon"></i>Cambiar tema</button></div><div class="card pad"><h3>Zona de riesgo</h3><p style="color:var(--muted);margin:8px 0 14px">Restablece datos demo. Exporta antes si deseas conservar cambios.</p><button class="btn btn-danger" onclick="resetData()"><i class="ti ti-trash"></i>Restablecer demo</button></div></div>`);
+    const DemoData = {
+      build(){
+        return {
+          meta:{version:2,updatedAt:new Date().toISOString()},
+          ui:{view:'dashboard',activeCompany:'grupo',theme:'dark'},
+          sync:{gistId:'',gistFile:'ge-business-hub-pro.json',lastSyncAt:'',status:'synced'},
+          empresas:[
+            {id:'emp_1',owner:'hemocura',nombre:'Hospital Metropolitano de Santiago',tipo:'Salud',sector:'Hospital',ciudad:'Santiago',direccion:'Av. Juan Pablo Duarte',empleados:900,camas:300,telefono:'809-000-1000',email:'compras@homs.test',contacto:'Dra. María Peña',prioridad:'alta',latitud:19.4517,longitud:-70.6970,notas:'Alto potencial para hemoderivados y jornadas.',ultimaVisita:'2026-04-15'},
+            {id:'emp_2',owner:'hemocura',nombre:'Clínica Unión Médica',tipo:'Salud',sector:'Clínica',ciudad:'Santiago',direccion:'Santiago',empleados:650,camas:180,telefono:'809-000-2000',email:'info@union.test',contacto:'Lic. José Núñez',prioridad:'alta',latitud:19.4500,longitud:-70.6860,notas:'Requiere seguimiento TPN.',ultimaVisita:'2026-03-28'},
+            {id:'emp_3',owner:'farmaserv',nombre:'Supermercados Nacional Villa Olga',tipo:'Retail',sector:'Supermercado',ciudad:'Santiago',direccion:'Villa Olga',empleados:140,camas:0,telefono:'809-000-3000',email:'gerencia@nacional.test',contacto:'Carla Reyes',prioridad:'media',latitud:19.4620,longitud:-70.6902,notas:'Potencial para insumos y dispensario.',ultimaVisita:'2026-05-01'},
+            {id:'emp_4',owner:'sofa',nombre:'Zona Franca Tamboril',tipo:'Fabril',sector:'Manufactura',ciudad:'Tamboril',direccion:'Tamboril',empleados:1200,camas:0,telefono:'809-000-4000',email:'rrhh@zf.test',contacto:'Rafael Santos',prioridad:'media',latitud:19.4850,longitud:-70.6090,notas:'Jornada de donación corporativa.',ultimaVisita:'2026-02-20'},
+            {id:'emp_5',owner:'equilibrium',nombre:'Centro Médico Cibao',tipo:'Salud',sector:'Centro médico',ciudad:'Santiago',direccion:'Centro ciudad',empleados:300,camas:95,telefono:'809-000-5000',email:'admin@cibao.test',contacto:'Dra. Ana López',prioridad:'alta',latitud:19.4550,longitud:-70.7033,notas:'Interés en formularios de inspección.',ultimaVisita:'2026-05-10'}
+          ],
+          contactos:[
+            {id:'con_1',empresaId:'emp_1',nombre:'Dra. María Peña',cargo:'Dirección Médica',telefono:'809-111-2222',email:'maria@homs.test'},
+            {id:'con_2',empresaId:'emp_2',nombre:'Lic. José Núñez',cargo:'Compras',telefono:'809-222-3333',email:'jose@union.test'},
+            {id:'con_3',empresaId:'emp_4',nombre:'Rafael Santos',cargo:'RRHH',telefono:'809-444-5555',email:'rafael@zf.test'}
+          ],
+          oportunidades:[
+            {id:'opp_1',empresaId:'emp_1',titulo:'Acuerdo hemoderivados Q2',etapa:'propuesta',valor:850000,probabilidad:65,cierre:'2026-06-20',responsable:'Gustavo',notas:'Pendiente reunión con compras.'},
+            {id:'opp_2',empresaId:'emp_2',titulo:'TPN y evaluación de servicio',etapa:'negociacion',valor:420000,probabilidad:55,cierre:'2026-06-10',responsable:'Gustavo',notas:'Enviar propuesta técnica.'},
+            {id:'opp_3',empresaId:'emp_4',titulo:'Jornada de donación corporativa',etapa:'contacto',valor:120000,probabilidad:35,cierre:'2026-07-01',responsable:'Gustavo',notas:'Coordinar con RRHH.'}
+          ],
+          tareas:[
+            {id:'tsk_1',empresaId:'emp_1',oportunidadId:'opp_1',titulo:'Llamar a compras para reunión final',estado:'pendiente',prioridad:'alta',vence:'2026-05-22',tipo:'llamada'},
+            {id:'tsk_2',empresaId:'emp_2',oportunidadId:'opp_2',titulo:'Enviar formulario TPN',estado:'pendiente',prioridad:'alta',vence:'2026-05-21',tipo:'formulario'},
+            {id:'tsk_3',empresaId:'emp_4',oportunidadId:'opp_3',titulo:'Preparar propuesta de jornada',estado:'pendiente',prioridad:'media',vence:'2026-05-28',tipo:'propuesta'}
+          ],
+          visitas:[
+            {id:'vis_1',empresaId:'emp_1',fecha:'2026-04-15',motivo:'Seguimiento comercial',resultado:'Interés confirmado',proximosPasos:'Agendar comité',latitud:19.4517,longitud:-70.6970},
+            {id:'vis_2',empresaId:'emp_5',fecha:'2026-05-10',motivo:'Inspección',resultado:'Necesitan formulario digital',proximosPasos:'Enviar link'}
+          ],
+          ventas:[
+            {id:'ven_1',empresaId:'emp_1',fecha:'2026-05-02',producto:'Hemoderivados',monto:250000},
+            {id:'ven_2',empresaId:'emp_2',fecha:'2026-04-24',producto:'Insumos médicos',monto:145000},
+            {id:'ven_3',empresaId:'emp_5',fecha:'2026-05-09',producto:'Servicio diagnóstico',monto:96000}
+          ],
+          formularios:[
+            {id:'frm_1',empresaId:'emp_2',tipo:'TPN',fecha:'2026-05-12',score:82,estado:'revisión',accion:'Enviar propuesta de mejora'},
+            {id:'frm_2',empresaId:'emp_5',tipo:'Inspección sucursales',fecha:'2026-05-11',score:74,estado:'acción requerida',accion:'Crear tarea correctiva'}
+          ]
+        };
       }
     };
 
-    function main(html){document.getElementById('main').innerHTML=html}
-    function kpi(label,value,icon,color,foot){return `<div class="card pad kpi" style="--k:${color}"><div style="display:flex;justify-content:space-between;gap:10px"><div><div class="kpi-v">${value}</div><div class="kpi-l">${label}</div></div><i class="ti ${icon}" style="font-size:28px;color:${color}"></i></div><div class="kpi-foot">${foot}</div></div>`}
-    function empty(msg){return `<div class="empty"><i class="ti ti-database-off"></i><strong>${msg}</strong></div>`}
-    function emptyRow(cols,msg){return `<tr><td colspan="${cols}">${empty(msg)}</td></tr>`}
-
-    function nextActions(emp,tareas,ops){
-      const rows = [];
-      tareas.filter(t=>t.estado!=='Completada').sort((a,b)=>daysSince(b.vence)-daysSince(a.vence)).slice(0,4).forEach(t=>rows.push({icon:'ti-clipboard-alert',title:t.titulo,sub:`${empresaName(t.empresaId)} · vence ${fmtDate(t.vence)}`,type:daysSince(t.vence)>0?'err':'warn'}));
-      emp.filter(e=>daysSince(e.lastVisit)>45).slice(0,3).forEach(e=>rows.push({icon:'ti-route',title:`Visitar ${e.nombre}`,sub:`${daysSince(e.lastVisit)} días desde última visita`,type:'info'}));
-      return rows.slice(0,6).map(r=>`<div class="risk"><i class="ti ${r.icon}" style="color:var(--${r.type})"></i><div><strong>${escapeHTML(r.title)}</strong><div style="color:var(--muted);font-size:12px">${escapeHTML(r.sub)}</div></div></div>`).join('') || empty('Sin acciones urgentes');
-    }
-    function riskList(emp){
-      const risks = emp.filter(e=>daysSince(e.lastVisit)>45 || Number(e.score||0)<70).sort((a,b)=>(b.camas+b.empleados/20)-(a.camas+a.empleados/20));
-      return `<div class="risk-list">${risks.slice(0,6).map(e=>`<div class="risk"><i class="ti ${e.score<70?'ti-mood-sad':'ti-calendar-time'}" style="color:${e.score<70?'var(--err)':'var(--warn)'}"></i><div><strong>${escapeHTML(e.nombre)}</strong><div style="color:var(--muted);font-size:12px">Score ${e.score} · última visita hace ${daysSince(e.lastVisit)} días · ${e.ciudad}</div></div></div>`).join('') || empty('Sin riesgos detectados')}</div>`;
-    }
-    function funnel(ops){
-      const stages = ['Prospecto','Calificación','Propuesta','Negociación','Ganada'];
-      const max = Math.max(1,...stages.map(s=>ops.filter(o=>o.etapa===s).reduce((a,b)=>a+Number(b.valor||0),0)));
-      return stages.map(s=>{const v=ops.filter(o=>o.etapa===s).reduce((a,b)=>a+Number(b.valor||0),0); return `<div style="margin-bottom:13px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><strong>${s}</strong><span style="color:var(--muted)">${money(v)}</span></div><div class="metric-bar"><span style="width:${Math.max(4,(v/max)*100)}%"></span></div></div>`}).join('');
-    }
-    function strategicTable(emp){
-      return `<div class="table-wrap"><table class="table" style="min-width:520px"><thead><tr><th>Empresa</th><th>Tipo</th><th>Potencial</th><th>Score</th></tr></thead><tbody>${emp.slice().sort((a,b)=>potential(b)-potential(a)).slice(0,6).map(e=>`<tr onclick="openEmpresaDetail('${e.id}')" style="cursor:pointer"><td>${escapeHTML(e.nombre)}</td><td>${escapeHTML(e.tipo)}</td><td>${potential(e)}</td><td><span class="pill ${e.score<70?'err':'ok'}">${e.score}</span></td></tr>`).join('')}</tbody></table></div>`;
-    }
-    function potential(e){return Math.round(Number(e.camas||0)*4 + Number(e.empleados||0)/15 + (e.prioridad==='Alta'?60:e.prioridad==='Media'?25:0));}
-
-    function renderEmpresaTable(){
-      const q=(document.getElementById('empSearch')?.value||'').toLowerCase(), tipo=document.getElementById('empTipo')?.value||'', pr=document.getElementById('empPrioridad')?.value||'';
-      let emp=filteredEmpresas().filter(e=>(!tipo||e.tipo===tipo)&&(!pr||e.prioridad===pr)&&[e.nombre,e.ciudad,e.sector,e.contacto].join(' ').toLowerCase().includes(q));
-      document.getElementById('empresaTable').innerHTML = `<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Empresa</th><th>Tipo / sector</th><th>Ciudad</th><th>Potencial</th><th>Última visita</th><th>Score</th><th>Acciones</th></tr></thead><tbody>${emp.map(e=>`<tr><td><strong style="color:var(--text)">${escapeHTML(e.nombre)}</strong><br><span style="font-size:12px">${escapeHTML(e.contacto||'Sin contacto')}</span></td><td>${escapeHTML(e.tipo)}<br><span style="font-size:12px">${escapeHTML(e.sector||'')}</span></td><td>${escapeHTML(e.ciudad||'')}</td><td><span class="pill info">${potential(e)}</span></td><td>${fmtDate(e.lastVisit)}<br><span style="font-size:12px">${daysSince(e.lastVisit)} días</span></td><td><span class="pill ${e.score<70?'err':e.score<80?'warn':'ok'}">${e.score}</span></td><td><div class="actions"><button class="btn btn-sm" onclick="openEmpresaDetail('${e.id}')"><i class="ti ti-eye"></i></button><button class="btn btn-sm" onclick="openEmpresaForm('${e.id}')"><i class="ti ti-pencil"></i></button><button class="btn btn-sm btn-danger" onclick="deleteItem('empresas','${e.id}')"><i class="ti ti-trash"></i></button></div></td></tr>`).join('') || emptyRow(7,'No hay empresas')}</tbody></table></div></div>`;
+    function normalizeState(input){
+      const base = DemoData.build();
+      const data = (input && typeof input === 'object') ? input : {};
+      const merged = {
+        ...base,
+        ...data,
+        meta:{...base.meta, ...(data.meta || {}), version:3},
+        ui:{...base.ui, ...(data.ui || {})},
+        sync:{...base.sync, ...(data.sync || {})},
+        empresas:Array.isArray(data.empresas) ? data.empresas : base.empresas,
+        contactos:Array.isArray(data.contactos) ? data.contactos : base.contactos,
+        oportunidades:Array.isArray(data.oportunidades) ? data.oportunidades : base.oportunidades,
+        tareas:Array.isArray(data.tareas) ? data.tareas : base.tareas,
+        visitas:Array.isArray(data.visitas) ? data.visitas : base.visitas,
+        ventas:Array.isArray(data.ventas) ? data.ventas : base.ventas,
+        formularios:Array.isArray(data.formularios) ? data.formularios : base.formularios
+      };
+      if(!merged.ui.view) merged.ui.view = 'dashboard';
+      if(!merged.ui.activeCompany) merged.ui.activeCompany = 'grupo';
+      if(!merged.ui.theme) merged.ui.theme = 'dark';
+      if(!merged.sync.gistFile) merged.sync.gistFile = 'ge-business-hub-pro.json';
+      if(!merged.sync.status) merged.sync.status = 'synced';
+      return merged;
     }
 
-    function routeList(emp){
-      const rows=emp.slice().sort((a,b)=>routeScore(b)-routeScore(a)).slice(0,8);
-      return rows.map((e,i)=>`<div class="risk"><div class="avatar" style="width:34px;height:34px;border-radius:12px">${i+1}</div><div><strong>${escapeHTML(e.nombre)}</strong><div style="color:var(--muted);font-size:12px">${e.ciudad} · ${daysSince(e.lastVisit)} días sin visita · potencial ${potential(e)}</div><div class="actions" style="margin-top:7px"><button class="btn btn-sm" onclick="openVisitaForm('${e.id}')"><i class="ti ti-checkup-list"></i>Visitar</button><a class="btn btn-sm" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${e.latitud},${e.longitud}"><i class="ti ti-navigation"></i>Maps</a></div></div></div>`).join('') || empty('No hay empresas geolocalizadas');
-    }
-    function routeScore(e){return daysSince(e.lastVisit)*2 + potential(e) + (e.score<70?80:0)}
-    function renderMap(emp){
-      if(!window.L) return;
-      if(mapInstance){mapInstance.remove(); mapInstance=null;}
-      mapInstance = L.map('map').setView([19.45,-70.70],10);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(mapInstance);
-      emp.forEach(e=>{L.marker([e.latitud,e.longitud]).addTo(mapInstance).bindPopup(`<strong>${escapeHTML(e.nombre)}</strong><br>${escapeHTML(e.ciudad)}<br>Potencial: ${potential(e)}<br><button onclick="openVisitaForm('${e.id}')">Registrar visita</button>`)});
-      if(emp.length){const group=L.featureGroup(emp.map(e=>L.marker([e.latitud,e.longitud]))); mapInstance.fitBounds(group.getBounds().pad(.2));}
-    }
-    function visitTimeline(){
-      const empIds=new Set(filteredEmpresas().map(e=>e.id));
-      return `<div class="timeline">${state.visitas.filter(v=>empIds.has(v.empresaId)).sort((a,b)=>b.fecha.localeCompare(a.fecha)).slice(0,8).map(v=>`<div class="tl"><div class="tl-icon"><i class="ti ti-map-pin-check"></i></div><div class="tl-body"><strong>${empresaName(v.empresaId)}</strong><br><small>${fmtDate(v.fecha)} · ${escapeHTML(v.motivo)}</small><p style="margin-top:5px;color:var(--muted)">${escapeHTML(v.resultado)}</p></div></div>`).join('') || empty('No hay visitas')}</div>`;
-    }
+    const StorageService = (() => {
+      function load(){
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          return normalizeState(raw ? JSON.parse(raw) : DemoData.build());
+        } catch(e){
+          console.error('No se pudo cargar el estado local. Se inicia con datos demo.', e);
+          return DemoData.build();
+        }
+      }
+      function save(state){ state.meta = state.meta || {}; state.meta.updatedAt = new Date().toISOString(); localStorage.setItem(STORE_KEY, JSON.stringify(normalizeState(state))); Bus.emit('storage:saved', state); }
+      function exportSafe(state){ const copy = structuredClone(normalizeState(state)); delete copy.sync.token; return copy; }
+      return {load, save, exportSafe};
+    })();
 
-    function pipeline(ops){
-      const stages=['Prospecto','Calificación','Propuesta','Negociación','Ganada'];
-      return stages.map(s=>{const list=ops.filter(o=>o.etapa===s); return `<div class="stage"><div class="stage-hd"><strong>${s}</strong><span class="pill">${list.length}</span></div>${list.map(o=>`<div class="deal" onclick="openOportunidadForm('${o.id}')"><strong>${escapeHTML(o.titulo)}</strong><small>${escapeHTML(empresaName(o.empresaId))}</small><div style="margin-top:8px;display:flex;justify-content:space-between"><span class="pill info">${money(o.valor)}</span><span class="pill">${o.probabilidad}%</span></div></div>`).join('') || `<div class="empty" style="padding:20px 8px">Vacío</div>`}</div>`}).join('');
-    }
-    function taskRow(t){return `<tr><td><button class="btn btn-sm ${t.estado==='Completada'?'btn-ok':''}" onclick="toggleTask('${t.id}')"><i class="ti ${t.estado==='Completada'?'ti-check':'ti-circle'}"></i>${t.estado}</button></td><td><strong style="color:var(--text)">${escapeHTML(t.titulo)}</strong></td><td>${escapeHTML(empresaName(t.empresaId))}</td><td><span class="pill ${t.prioridad==='Alta'?'err':t.prioridad==='Media'?'warn':'info'}">${t.prioridad}</span></td><td>${fmtDate(t.vence)} ${daysSince(t.vence)>0&&t.estado!=='Completada'?'<span class="pill err">Vencida</span>':''}</td><td>${escapeHTML(t.tipo)}</td><td><div class="actions"><button class="btn btn-sm" onclick="openTareaForm('${t.id}')"><i class="ti ti-pencil"></i></button><button class="btn btn-sm btn-danger" onclick="deleteItem('tareas','${t.id}')"><i class="ti ti-trash"></i></button></div></td></tr>`}
-    function contactCard(c){return `<div class="card pad"><div style="display:flex;gap:12px;align-items:flex-start"><div class="avatar">${escapeHTML(c.nombre.slice(0,2).toUpperCase())}</div><div style="flex:1"><strong>${escapeHTML(c.nombre)}</strong><div style="color:var(--muted);font-size:12px">${escapeHTML(c.cargo)} · ${escapeHTML(empresaName(c.empresaId))}</div><div class="actions" style="margin-top:11px"><a class="btn btn-sm" href="tel:${escapeHTML(c.telefono)}"><i class="ti ti-phone"></i></a><a class="btn btn-sm" href="mailto:${escapeHTML(c.email)}"><i class="ti ti-mail"></i></a><a class="btn btn-sm btn-ok" target="_blank" href="https://wa.me/1${String(c.whatsapp||'').replace(/\D/g,'')}"><i class="ti ti-brand-whatsapp"></i></a><button class="btn btn-sm" onclick="openContactoForm('${c.id}')"><i class="ti ti-pencil"></i></button></div></div></div></div>`}
+    const StateService = (() => {
+      let state = StorageService.load();
+      function get(){ return state; }
+      function set(pathOrPatch, value){
+        if(typeof pathOrPatch === 'string'){
+          const keys = pathOrPatch.split('.'); let obj = state; keys.slice(0,-1).forEach(k => obj = obj[k]); obj[keys.at(-1)] = value;
+        } else { state = {...state, ...pathOrPatch}; }
+        StorageService.save(state); Bus.emit('state:changed', state);
+      }
+      function replace(next){ state = next; StorageService.save(state); Bus.emit('state:changed', state); }
+      function collection(name){ return state[name] || []; }
+      return {get,set,replace,collection};
+    })();
 
-    function salesReport(ventas){const by={}; ventas.forEach(v=>by[v.empresaId]=(by[v.empresaId]||0)+Number(v.monto||0)); const max=Math.max(1,...Object.values(by)); return Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([id,v])=>`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><strong>${escapeHTML(empresaName(id))}</strong><span>${money(v)}</span></div><div class="metric-bar"><span style="width:${(v/max)*100}%"></span></div></div>`).join('') || empty('No hay ventas');}
-    function sectorPotential(emp){const by={}; emp.forEach(e=>by[e.tipo]=(by[e.tipo]||0)+potential(e)); const max=Math.max(1,...Object.values(by)); return Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><strong>${escapeHTML(k)}</strong><span>${v}</span></div><div class="metric-bar"><span style="width:${(v/max)*100}%"></span></div></div>`).join('') || empty('No hay datos');}
-    function executiveReport(emp,ops,ventas){const top=emp.slice().sort((a,b)=>potential(b)-potential(a))[0]; const risky=emp.filter(e=>e.score<70 || daysSince(e.lastVisit)>45).length; return `<div class="grid grid-3"><div><span class="pill info">Mayor potencial</span><h3 style="margin-top:9px">${escapeHTML(top?.nombre||'—')}</h3><p style="color:var(--muted)">Potencial ${top?potential(top):0}</p></div><div><span class="pill warn">Atención</span><h3 style="margin-top:9px">${risky} cuentas</h3><p style="color:var(--muted)">Requieren visita o plan de mejora.</p></div><div><span class="pill ok">Pipeline</span><h3 style="margin-top:9px">${money(ops.reduce((a,b)=>a+Number(b.valor||0),0))}</h3><p style="color:var(--muted)">Valor estimado abierto.</p></div></div>`}
+    function scopeRows(rows){ const active = StateService.get().ui.activeCompany; if(active === 'grupo') return rows; return rows.filter(r => { const e = EmpresaService.byId(r.empresaId || r.id); return (r.owner || e?.owner) === active; }); }
 
-    function openModal(title, body, foot=''){
-      const root=document.getElementById('modalRoot');
-      root.innerHTML=`<div class="overlay" onclick="closeModal()"></div><div class="modal"><div class="modal-hd"><strong>${title}</strong><div class="spacer"></div><button class="btn btn-icon" onclick="closeModal()"><i class="ti ti-x"></i></button></div><div class="modal-body">${body}</div>${foot?`<div class="modal-ft">${foot}</div>`:''}</div>`;
-      root.classList.add('show');
-    }
-    function closeModal(){document.getElementById('modalRoot').classList.remove('show')}
-    function toast(msg,type=''){const w=document.getElementById('toastWrap'); const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; w.appendChild(el); setTimeout(()=>el.remove(),3200)}
+    const BaseService = (collectionName) => ({
+      all(){ return scopeRows(StateService.collection(collectionName)); },
+      raw(){ return StateService.collection(collectionName); },
+      byId(id){ return StateService.collection(collectionName).find(x => x.id === id); },
+      upsert(item){ const s = StateService.get(); const list = s[collectionName]; const idx = list.findIndex(x => x.id === item.id); const next = {...item, id:item.id || uid(collectionName.slice(0,3)), updatedAt:new Date().toISOString()}; if(idx >= 0) list[idx] = {...list[idx], ...next}; else list.unshift(next); StateService.set(collectionName, list); Bus.emit(collectionName+':changed', next); return next; },
+      remove(id){ const s = StateService.get(); s[collectionName] = s[collectionName].filter(x => x.id !== id); StateService.set(collectionName, s[collectionName]); Bus.emit(collectionName+':changed'); }
+    });
 
-    function empresaOptions(selected=''){return filteredEmpresas().map(e=>`<option value="${e.id}" ${e.id===selected?'selected':''}>${escapeHTML(e.nombre)}</option>`).join('')}
-    function openEmpresaForm(id=''){
-      const e = id ? empresa(id) : {grupo:state.activeCompany==='grupo'?'hemocura':state.activeCompany,nombre:'',tipo:'Salud',sector:'',ciudad:'',direccion:'',empleados:0,camas:0,telefono:'',email:'',contacto:'',prioridad:'Media',latitud:'',longitud:'',notas:'',lastVisit:'',score:75};
-      openModal(id?'Editar empresa':'Nueva empresa', `<div class="form-grid form-2">
-        ${field('Nombre','nombre',e.nombre)}${selectField('Empresa GE','grupo',e.grupo,Object.entries(companies).filter(([k])=>k!=='grupo').map(([k,c])=>[k,c.name]))}
-        ${selectField('Tipo','tipo',e.tipo,['Salud','Fabril','Retail','Servicios','ONG'].map(x=>[x,x]))}${field('Sector','sector',e.sector)}
-        ${field('Ciudad','ciudad',e.ciudad)}${field('Dirección','direccion',e.direccion)}
-        ${field('Empleados','empleados',e.empleados,'number')}${field('Camas','camas',e.camas,'number')}
-        ${field('Teléfono','telefono',e.telefono)}${field('Email','email',e.email,'email')}
-        ${field('Contacto principal','contacto',e.contacto)}${selectField('Prioridad','prioridad',e.prioridad,['Alta','Media','Baja'].map(x=>[x,x]))}
-        ${field('Latitud','latitud',e.latitud,'number','step="any"')}${field('Longitud','longitud',e.longitud,'number','step="any"')}
-        ${field('Última visita','lastVisit',e.lastVisit,'date')}${field('Score','score',e.score,'number','min="0" max="100"')}
-        <div style="grid-column:1/-1"><label class="label">Notas</label><textarea id="notas" class="textarea">${escapeHTML(e.notas)}</textarea></div>
-      </div>`, `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveEmpresa('${id}')">Guardar</button>`);
-    }
-    function field(label,id,value,type='text',extra=''){return `<div><label class="label">${label}</label><input class="input" id="${id}" type="${type}" value="${escapeHTML(value)}" ${extra}></div>`}
-    function selectField(label,id,value,opts){return `<div><label class="label">${label}</label><select class="select" id="${id}">${opts.map(([v,l])=>`<option value="${escapeHTML(v)}" ${String(v)===String(value)?'selected':''}>${escapeHTML(l)}</option>`).join('')}</select></div>`}
-    function val(id){return document.getElementById(id)?.value ?? ''}
-    function saveEmpresa(id){
-      const data={id:id||uid('emp'),grupo:val('grupo'),nombre:val('nombre'),tipo:val('tipo'),sector:val('sector'),ciudad:val('ciudad'),direccion:val('direccion'),empleados:Number(val('empleados')),camas:Number(val('camas')),telefono:val('telefono'),email:val('email'),contacto:val('contacto'),prioridad:val('prioridad'),latitud:Number(val('latitud'))||null,longitud:Number(val('longitud'))||null,notas:val('notas'),lastVisit:val('lastVisit'),score:Number(val('score'))||75,createdAt:id?(empresa(id)?.createdAt||todayISO()):todayISO()};
-      if(!data.nombre) return toast('El nombre es obligatorio','err');
-      if(id) state.empresas=state.empresas.map(x=>x.id===id?data:x); else state.empresas.push(data);
-      save(); closeModal(); render(); toast('Empresa guardada','ok');
-    }
-    function openEmpresaDetail(id){
-      const e=empresa(id); if(!e) return;
-      const contacts=state.contactos.filter(c=>c.empresaId===id), ops=state.oportunidades.filter(o=>o.empresaId===id), tasks=state.tareas.filter(t=>t.empresaId===id), visits=state.visitas.filter(v=>v.empresaId===id);
-      openModal('Ficha 360° de empresa', `<div class="company-hero"><div class="card pad"><div style="display:flex;gap:12px"><div class="avatar">${escapeHTML(e.nombre.slice(0,2).toUpperCase())}</div><div><h2>${escapeHTML(e.nombre)}</h2><p style="color:var(--muted)">${escapeHTML(e.tipo)} · ${escapeHTML(e.sector)} · ${escapeHTML(e.ciudad)}</p><div class="actions" style="margin-top:9px"><span class="pill info">Potencial ${potential(e)}</span><span class="pill ${e.score<70?'err':'ok'}">Score ${e.score}</span><span class="pill warn">${daysSince(e.lastVisit)} días sin visita</span></div></div></div><p style="color:var(--muted);margin-top:14px">${escapeHTML(e.notas||'Sin notas')}</p></div><div class="card pad"><h3>Acciones rápidas</h3><div class="actions" style="margin-top:12px"><button class="btn btn-primary" onclick="openVisitaForm('${id}')"><i class="ti ti-map-pin-plus"></i>Visita</button><button class="btn" onclick="openTareaForm('', '${id}')"><i class="ti ti-clipboard-plus"></i>Tarea</button><button class="btn" onclick="openOportunidadForm('', '${id}')"><i class="ti ti-briefcase"></i>Oportunidad</button></div></div></div><div class="grid grid-3" style="margin-top:14px">${kpi('Contactos',contacts.length,'ti-users','var(--info)','Decisores registrados')}${kpi('Oportunidades',ops.length,'ti-briefcase','var(--active-color)',money(ops.reduce((a,b)=>a+Number(b.valor||0),0)))}${kpi('Tareas pendientes',tasks.filter(t=>t.estado!=='Completada').length,'ti-clipboard-list','var(--warn)','Seguimiento')}</div><div class="card pad" style="margin-top:14px"><h3>Historial de visitas</h3><div style="margin-top:10px">${visits.map(v=>`<div class="risk"><i class="ti ti-map-pin-check" style="color:var(--ok)"></i><div><strong>${fmtDate(v.fecha)} · ${escapeHTML(v.motivo)}</strong><div style="color:var(--muted);font-size:12px">${escapeHTML(v.resultado)}</div></div></div>`).join('') || empty('Sin visitas')}</div></div>`);
-    }
+    const EmpresaService = (() => {
+      const base = BaseService('empresas');
+      function score(e){ const recency = Math.max(0, 100 - daysSince(e.ultimaVisita)); const potential = Math.min(100, (Number(e.camas||0)*0.25) + (Number(e.empleados||0)*0.03)); const pr = e.prioridad === 'alta' ? 25 : e.prioridad === 'media' ? 12 : 4; return Math.round(Math.min(100, recency*0.35 + potential*0.45 + pr)); }
+      function risks(){ return base.all().map(e => ({empresa:e, score:score(e), dias:daysSince(e.ultimaVisita)})).filter(x => x.dias > 30 || x.score < 55).sort((a,b)=>b.dias-a.dias); }
+      function importRows(rows){ let ok=0; rows.forEach(r => { if(!r.nombre && !r.Nombre) return; base.upsert({ id:r.id || uid('emp'), owner:r.owner || StateService.get().ui.activeCompany || 'grupo', nombre:r.nombre || r.Nombre, tipo:r.tipo || r.Tipo || 'Sin clasificar', sector:r.sector || r.Sector || '', ciudad:r.ciudad || r.Ciudad || '', direccion:r.direccion || r.Dirección || r.Direccion || '', empleados:Number(r.empleados || r.Empleados || 0), camas:Number(r.camas || r.Camas || 0), telefono:r.telefono || r.Teléfono || r.Telefono || '', email:r.email || r.Email || '', contacto:r.contacto || r.Contacto || '', prioridad:r.prioridad || r.Prioridad || 'media', latitud:Number(r.latitud || r.Latitud || 0) || null, longitud:Number(r.longitud || r.Longitud || 0) || null, notas:r.notas || r.Notas || '', ultimaVisita:r.ultimaVisita || r['Última Visita'] || '' }); ok++; }); return ok; }
+      return {...base, score, risks, importRows};
+    })();
+    const ContactoService = BaseService('contactos');
+    const OportunidadService = BaseService('oportunidades');
+    const TareaService = (() => { const base = BaseService('tareas'); return {...base, pending(){return base.all().filter(t=>t.estado !== 'completada')}, complete(id){ const t=base.byId(id); if(t) base.upsert({...t, estado:'completada'}); }}; })();
+    const VisitaService = (() => { const base = BaseService('visitas'); return {...base, register(v){ const saved = base.upsert(v); const e = EmpresaService.byId(v.empresaId); if(e) EmpresaService.upsert({...e, ultimaVisita:v.fecha || todayISO()}); return saved; }}; })();
+    const VentaService = BaseService('ventas');
+    const FormularioService = BaseService('formularios');
 
-    function openTareaForm(id='', empresaId=''){
-      const t=id?byId('tareas',id):{empresaId:empresaId||filteredEmpresas()[0]?.id||'',opId:'',titulo:'',tipo:'Seguimiento',prioridad:'Media',estado:'Pendiente',vence:todayISO()};
-      openModal(id?'Editar tarea':'Nueva tarea', `<div class="form-grid form-2">${selectField('Empresa','empresaId',t.empresaId,filteredEmpresas().map(e=>[e.id,e.nombre]))}${field('Título','titulo',t.titulo)}${selectField('Tipo','tipo',t.tipo,['Seguimiento','Propuesta','Formulario','Ruta','Cobro','Venta'].map(x=>[x,x]))}${selectField('Prioridad','prioridad',t.prioridad,['Alta','Media','Baja'].map(x=>[x,x]))}${selectField('Estado','estado',t.estado,['Pendiente','En progreso','Completada'].map(x=>[x,x]))}${field('Vence','vence',t.vence,'date')}</div>`, `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveTarea('${id}')">Guardar</button>`);
-    }
-    function saveTarea(id){const data={id:id||uid('ta'),empresaId:val('empresaId'),titulo:val('titulo'),tipo:val('tipo'),prioridad:val('prioridad'),estado:val('estado'),vence:val('vence'),opId:''}; if(!data.titulo)return toast('El título es obligatorio','err'); if(id)state.tareas=state.tareas.map(x=>x.id===id?data:x); else state.tareas.push(data); save();closeModal();render();toast('Tarea guardada','ok')}
-    function toggleTask(id){const t=byId('tareas',id); if(t){t.estado=t.estado==='Completada'?'Pendiente':'Completada'; save();render();}}
+    const BIService = (() => {
+      function kpis(){ const empresas=EmpresaService.all(), opp=OportunidadService.all(), tareas=TareaService.pending(), ventas=VentaService.all(); return {empresas:empresas.length, pipeline:opp.reduce((s,o)=>s+Number(o.valor||0),0), ventasMes:ventas.filter(v=>String(v.fecha||'').slice(0,7)===todayISO().slice(0,7)).reduce((s,v)=>s+Number(v.monto||0),0), tareas:tareas.length, riesgo:EmpresaService.risks().length}; }
+      function nextActions(){ return [...TareaService.pending()].sort((a,b)=>String(a.vence).localeCompare(String(b.vence))).slice(0,6); }
+      function funnel(){ const stages=['prospecto','contacto','propuesta','negociacion','ganada']; return stages.map(st => ({stage:st, items:OportunidadService.all().filter(o=>o.etapa===st)})); }
+      return {kpis,nextActions,funnel};
+    })();
 
-    function openOportunidadForm(id='', empresaId=''){
-      const o=id?byId('oportunidades',id):{empresaId:empresaId||filteredEmpresas()[0]?.id||'',titulo:'',etapa:'Prospecto',valor:0,probabilidad:25,cierre:todayISO(),notas:''};
-      openModal(id?'Editar oportunidad':'Nueva oportunidad', `<div class="form-grid form-2">${selectField('Empresa','empresaId',o.empresaId,filteredEmpresas().map(e=>[e.id,e.nombre]))}${field('Título','titulo',o.titulo)}${selectField('Etapa','etapa',o.etapa,['Prospecto','Calificación','Propuesta','Negociación','Ganada'].map(x=>[x,x]))}${field('Valor estimado','valor',o.valor,'number')}${field('Probabilidad %','probabilidad',o.probabilidad,'number','min="0" max="100"')}${field('Cierre estimado','cierre',o.cierre,'date')}<div style="grid-column:1/-1"><label class="label">Notas</label><textarea id="notas" class="textarea">${escapeHTML(o.notas)}</textarea></div></div>`, `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveOportunidad('${id}')">Guardar</button>`);
-    }
-    function saveOportunidad(id){const data={id:id||uid('op'),empresaId:val('empresaId'),titulo:val('titulo'),etapa:val('etapa'),valor:Number(val('valor')),probabilidad:Number(val('probabilidad')),cierre:val('cierre'),notas:val('notas')}; if(!data.titulo)return toast('El título es obligatorio','err'); if(id)state.oportunidades=state.oportunidades.map(x=>x.id===id?data:x); else state.oportunidades.push(data); save();closeModal();render();toast('Oportunidad guardada','ok')}
+    const GistSyncService = (() => {
+      const tokenKey = STORE_KEY + '_github_token';
+      const headers = () => { const token = localStorage.getItem(tokenKey); if(!token) throw new Error('Falta el token de GitHub con permiso gist.'); return {'Accept':'application/vnd.github+json','Content-Type':'application/json','Authorization':'Bearer '+token}; };
+      async function request(url, options={}){ const res = await fetch(url, {...options, headers:{...headers(), ...(options.headers||{})}}); const text = await res.text(); let data; try{ data = text ? JSON.parse(text) : {}; } catch { data = text; } if(!res.ok){ const msg = data?.message || text || 'Error desconocido'; throw new Error(`${res.status} ${msg}`); } return data; }
+      function setConfig({token,gistId,gistFile}){ if(token !== undefined) localStorage.setItem(tokenKey, token.trim()); const s = StateService.get(); s.sync.gistId = ((gistId ?? s.sync.gistId) || '').trim(); s.sync.gistFile = ((gistFile ?? s.sync.gistFile) || 'ge-business-hub-pro.json').trim(); StateService.set('sync', s.sync); }
+      function getConfig(){ const s=StateService.get().sync; return {...s, token:localStorage.getItem(tokenKey)||''}; }
+      async function test(){ const me = await request('https://api.github.com/user'); return me; }
+      async function create(){ const s=StateService.get(); const file=s.sync.gistFile || 'ge-business-hub-pro.json'; const body={description:'GE Business Hub Pro sync', public:false, files:{[file]:{content:JSON.stringify(StorageService.exportSafe(s),null,2)}}}; const gist=await request('https://api.github.com/gists',{method:'POST',body:JSON.stringify(body)}); s.sync.gistId=gist.id; s.sync.lastSyncAt=new Date().toISOString(); s.sync.status='synced'; StateService.set('sync',s.sync); return gist; }
+      async function upload(){ const s=StateService.get(); if(!s.sync.gistId) return create(); const file=s.sync.gistFile || 'ge-business-hub-pro.json'; const body={files:{[file]:{content:JSON.stringify(StorageService.exportSafe(s),null,2)}}}; const gist=await request('https://api.github.com/gists/'+s.sync.gistId,{method:'PATCH',body:JSON.stringify(body)}); s.sync.lastSyncAt=new Date().toISOString(); s.sync.status='synced'; StateService.set('sync',s.sync); return gist; }
+      async function download(){ const s=StateService.get(); if(!s.sync.gistId) throw new Error('Falta el Gist ID.'); const gist=await request('https://api.github.com/gists/'+s.sync.gistId); const file=s.sync.gistFile || Object.keys(gist.files||{})[0]; let content = gist.files?.[file]?.content; if(gist.files?.[file]?.truncated && gist.files?.[file]?.raw_url){ content = await fetch(gist.files[file].raw_url).then(r=>r.text()); } if(!content) throw new Error('No se encontró el archivo de datos dentro del Gist.'); const remote=JSON.parse(content); remote.sync = {...s.sync, ...(remote.sync||{}), gistId:s.sync.gistId, gistFile:file, lastSyncAt:new Date().toISOString(), status:'synced'}; StateService.replace(remote); return remote; }
+      return {setConfig,getConfig,test,create,upload,download};
+    })();
 
-    function openContactoForm(id=''){
-      const c=id?byId('contactos',id):{empresaId:filteredEmpresas()[0]?.id||'',nombre:'',cargo:'',telefono:'',email:'',whatsapp:''};
-      openModal(id?'Editar contacto':'Nuevo contacto', `<div class="form-grid form-2">${selectField('Empresa','empresaId',c.empresaId,filteredEmpresas().map(e=>[e.id,e.nombre]))}${field('Nombre','nombre',c.nombre)}${field('Cargo','cargo',c.cargo)}${field('Teléfono','telefono',c.telefono)}${field('Email','email',c.email,'email')}${field('WhatsApp','whatsapp',c.whatsapp)}</div>`, `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveContacto('${id}')">Guardar</button>`);
-    }
-    function saveContacto(id){const data={id:id||uid('ct'),empresaId:val('empresaId'),nombre:val('nombre'),cargo:val('cargo'),telefono:val('telefono'),email:val('email'),whatsapp:val('whatsapp')}; if(!data.nombre)return toast('El nombre es obligatorio','err'); if(id)state.contactos=state.contactos.map(x=>x.id===id?data:x); else state.contactos.push(data); save();closeModal();render();toast('Contacto guardado','ok')}
+    const ModalService = (() => {
+      function open(title, body, footer=''){ document.getElementById('modalRoot').innerHTML = `<div class="overlay" onclick="App.Modal.close()"></div><div class="modal"><div class="modal-hd"><strong>${title}</strong><div class="spacer"></div><button class="btn btn-icon" onclick="App.Modal.close()"><i class="ti ti-x"></i></button></div><div class="modal-body">${body}</div>${footer?`<div class="modal-ft">${footer}</div>`:''}</div>`; document.getElementById('modalRoot').classList.add('show'); }
+      function close(){ document.getElementById('modalRoot').classList.remove('show'); document.getElementById('modalRoot').innerHTML=''; }
+      return {open, close};
+    })();
 
-    function openVisitaForm(empresaId=''){
-      openModal('Registrar visita', `<div class="form-grid form-2">${selectField('Empresa','empresaId',empresaId||filteredEmpresas()[0]?.id,filteredEmpresas().map(e=>[e.id,e.nombre]))}${field('Fecha','fecha',todayISO(),'date')}${field('Motivo','motivo','Seguimiento comercial')}<div><label class="label">Próximo paso</label><input class="input" id="proximo" value="Crear seguimiento"></div><div style="grid-column:1/-1"><label class="label">Resultado</label><textarea id="resultado" class="textarea" placeholder="Resumen de la visita..."></textarea></div></div>`, `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveVisita()">Guardar visita</button>`);
-    }
-    function saveVisita(){const idEmp=val('empresaId'); const data={id:uid('vi'),empresaId:idEmp,fecha:val('fecha'),motivo:val('motivo'),resultado:val('resultado'),proximo:val('proximo')}; state.visitas.push(data); const e=empresa(idEmp); if(e)e.lastVisit=data.fecha; if(data.proximo)state.tareas.push({id:uid('ta'),empresaId:idEmp,opId:'',titulo:data.proximo,tipo:'Seguimiento',prioridad:'Media',estado:'Pendiente',vence:todayISO()}); save();closeModal();render();toast('Visita registrada y CRM actualizado','ok')}
+    const ToastService = (() => ({ show(msg,type='info'){ const el=document.createElement('div'); el.className='toast '+type; el.innerHTML=esc(msg); document.getElementById('toastWrap').appendChild(el); setTimeout(()=>el.remove(),4200); } }))();
 
-    function openFormularioForm(){
-      openModal('Registrar formulario', `<div class="form-grid form-2">${selectField('Empresa','empresaId',filteredEmpresas()[0]?.id,filteredEmpresas().map(e=>[e.id,e.nombre]))}${selectField('Tipo','tipo','Evaluación del Servicio',['Evaluación del Servicio','TPN','Inspección de Sucursales'].map(x=>[x,x]))}${field('Fecha','fecha',todayISO(),'date')}${field('Score','score',75,'number','min="0" max="100"')}<div style="grid-column:1/-1"><label class="label">Acción sugerida</label><textarea id="accion" class="textarea">Crear seguimiento según resultado del formulario.</textarea></div></div>`, `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveFormulario()">Guardar</button>`);
-    }
-    function saveFormulario(){const data={id:uid('fo'),empresaId:val('empresaId'),tipo:val('tipo'),fecha:val('fecha'),score:Number(val('score')),accion:val('accion')}; state.formularios.push(data); const e=empresa(data.empresaId); if(e)e.score=data.score; if(data.score<70)state.tareas.push({id:uid('ta'),empresaId:data.empresaId,opId:'',titulo:'Plan de mejora por baja satisfacción',tipo:'Formulario',prioridad:'Alta',estado:'Pendiente',vence:todayISO()}); save();closeModal();render();toast('Formulario registrado','ok')}
-    function copyFormMessage(id){const f=byId('formularios',id), e=empresa(f.empresaId); const msg=`Hola, ${e.contacto||''}. Compartimos el seguimiento del formulario ${f.tipo} para ${e.nombre}. Score registrado: ${f.score}. Acción sugerida: ${f.accion}`; navigator.clipboard?.writeText(msg); toast('Mensaje copiado','ok')}
+    const Forms = (() => {
+      const optionsEmpresas = () => EmpresaService.all().map(e=>`<option value="${e.id}">${esc(e.nombre)}</option>`).join('');
+      function empresaForm(id=''){ const e = EmpresaService.byId(id) || {owner:StateService.get().ui.activeCompany==='grupo'?'hemocura':StateService.get().ui.activeCompany,prioridad:'media',tipo:'Salud'}; ModalService.open(id?'Editar empresa':'Nueva empresa', `<div class="form-grid form-2"><div><label class="label">Nombre</label><input id="f_nombre" class="input" value="${esc(e.nombre||'')}"></div><div><label class="label">Empresa GE</label><select id="f_owner" class="select">${Object.entries(CompanyCatalog).filter(([k])=>k!=='grupo').map(([k,c])=>`<option value="${k}" ${e.owner===k?'selected':''}>${c.name}</option>`).join('')}</select></div><div><label class="label">Tipo</label><select id="f_tipo" class="select">${['Salud','Fabril','Servicios','Retail','ONG'].map(x=>`<option ${e.tipo===x?'selected':''}>${x}</option>`).join('')}</select></div><div><label class="label">Sector</label><input id="f_sector" class="input" value="${esc(e.sector||'')}"></div><div><label class="label">Ciudad</label><input id="f_ciudad" class="input" value="${esc(e.ciudad||'')}"></div><div><label class="label">Prioridad</label><select id="f_prioridad" class="select">${['alta','media','baja'].map(x=>`<option ${e.prioridad===x?'selected':''}>${x}</option>`).join('')}</select></div><div><label class="label">Empleados</label><input id="f_empleados" type="number" class="input" value="${e.empleados||0}"></div><div><label class="label">Camas</label><input id="f_camas" type="number" class="input" value="${e.camas||0}"></div><div><label class="label">Teléfono</label><input id="f_telefono" class="input" value="${esc(e.telefono||'')}"></div><div><label class="label">Email</label><input id="f_email" class="input" value="${esc(e.email||'')}"></div><div><label class="label">Contacto</label><input id="f_contacto" class="input" value="${esc(e.contacto||'')}"></div><div><label class="label">Última visita</label><input id="f_ultima" type="date" class="input" value="${esc(e.ultimaVisita||'')}"></div><div><label class="label">Latitud</label><input id="f_lat" class="input" value="${esc(e.latitud||'')}"></div><div><label class="label">Longitud</label><input id="f_lng" class="input" value="${esc(e.longitud||'')}"></div><div style="grid-column:1/-1"><label class="label">Dirección</label><input id="f_dir" class="input" value="${esc(e.direccion||'')}"></div><div style="grid-column:1/-1"><label class="label">Notas</label><textarea id="f_notas" class="textarea">${esc(e.notas||'')}</textarea></div></div>`, `<button class="btn" onclick="App.Modal.close()">Cancelar</button><button class="btn btn-primary" onclick="App.Forms.saveEmpresa('${id}')">Guardar</button>`); }
+      function saveEmpresa(id=''){ const e = {id:id||uid('emp'), owner:val('f_owner'), nombre:val('f_nombre'), tipo:val('f_tipo'), sector:val('f_sector'), ciudad:val('f_ciudad'), direccion:val('f_dir'), empleados:Number(val('f_empleados')), camas:Number(val('f_camas')), telefono:val('f_telefono'), email:val('f_email'), contacto:val('f_contacto'), prioridad:val('f_prioridad'), latitud:Number(val('f_lat'))||null, longitud:Number(val('f_lng'))||null, notas:val('f_notas'), ultimaVisita:val('f_ultima')}; EmpresaService.upsert(e); ModalService.close(); Router.render(); ToastService.show('Empresa guardada','ok'); }
+      function tareaForm(){ ModalService.open('Nueva tarea', `<div class="form-grid"><div><label class="label">Empresa</label><select id="t_empresa" class="select">${optionsEmpresas()}</select></div><div><label class="label">Título</label><input id="t_titulo" class="input"></div><div class="form-grid form-3"><div><label class="label">Prioridad</label><select id="t_prioridad" class="select"><option>alta</option><option selected>media</option><option>baja</option></select></div><div><label class="label">Tipo</label><select id="t_tipo" class="select"><option>llamada</option><option>visita</option><option>propuesta</option><option>formulario</option></select></div><div><label class="label">Vence</label><input id="t_vence" type="date" class="input" value="${todayISO()}"></div></div></div>`, `<button class="btn" onclick="App.Modal.close()">Cancelar</button><button class="btn btn-primary" onclick="App.Forms.saveTarea()">Guardar</button>`); }
+      function saveTarea(){ TareaService.upsert({id:uid('tsk'),empresaId:val('t_empresa'),titulo:val('t_titulo'),estado:'pendiente',prioridad:val('t_prioridad'),vence:val('t_vence'),tipo:val('t_tipo')}); ModalService.close(); Router.render(); ToastService.show('Tarea creada','ok'); }
+      function oportunidadForm(){ ModalService.open('Nueva oportunidad', `<div class="form-grid"><div><label class="label">Empresa</label><select id="o_empresa" class="select">${optionsEmpresas()}</select></div><div><label class="label">Título</label><input id="o_titulo" class="input"></div><div class="form-grid form-3"><div><label class="label">Etapa</label><select id="o_etapa" class="select"><option>prospecto</option><option>contacto</option><option>propuesta</option><option>negociacion</option><option>ganada</option></select></div><div><label class="label">Valor</label><input id="o_valor" type="number" class="input" value="0"></div><div><label class="label">Probabilidad</label><input id="o_prob" type="number" class="input" value="50"></div></div><div><label class="label">Cierre estimado</label><input id="o_cierre" type="date" class="input" value="${todayISO()}"></div><div><label class="label">Notas</label><textarea id="o_notas" class="textarea"></textarea></div></div>`, `<button class="btn" onclick="App.Modal.close()">Cancelar</button><button class="btn btn-primary" onclick="App.Forms.saveOportunidad()">Guardar</button>`); }
+      function saveOportunidad(){ OportunidadService.upsert({id:uid('opp'),empresaId:val('o_empresa'),titulo:val('o_titulo'),etapa:val('o_etapa'),valor:Number(val('o_valor')),probabilidad:Number(val('o_prob')),cierre:val('o_cierre'),responsable:'Gustavo',notas:val('o_notas')}); ModalService.close(); Router.render(); ToastService.show('Oportunidad creada','ok'); }
+      function visitaForm(empresaId=''){ ModalService.open('Registrar visita', `<div class="form-grid"><div><label class="label">Empresa</label><select id="v_empresa" class="select">${optionsEmpresas()}</select></div><div><label class="label">Fecha</label><input id="v_fecha" type="date" class="input" value="${todayISO()}"></div><div><label class="label">Motivo</label><input id="v_motivo" class="input" value="Seguimiento comercial"></div><div><label class="label">Resultado</label><textarea id="v_resultado" class="textarea"></textarea></div><div><label class="label">Próximos pasos</label><textarea id="v_pasos" class="textarea"></textarea></div></div>`, `<button class="btn" onclick="App.Modal.close()">Cancelar</button><button class="btn btn-primary" onclick="App.Forms.saveVisita()">Guardar</button>`); if(empresaId) document.getElementById('v_empresa').value=empresaId; }
+      function saveVisita(){ VisitaService.register({id:uid('vis'),empresaId:val('v_empresa'),fecha:val('v_fecha'),motivo:val('v_motivo'),resultado:val('v_resultado'),proximosPasos:val('v_pasos')}); ModalService.close(); Router.render(); ToastService.show('Visita registrada','ok'); }
+      function val(id){ return document.getElementById(id)?.value?.trim() || ''; }
+      return {empresaForm,saveEmpresa,tareaForm,saveTarea,oportunidadForm,saveOportunidad,visitaForm,saveVisita};
+    })();
 
-    function deleteItem(list,id){if(!confirm('¿Eliminar este registro?'))return; state[list]=state[list].filter(x=>x.id!==id); save();render();toast('Registro eliminado','warn')}
-    function quickAdd(){const map={dashboard:openTareaForm,empresas:openEmpresaForm,campo:openVisitaForm,oportunidades:openOportunidadForm,tareas:openTareaForm,contactos:openContactoForm,formularios:openFormularioForm}; (map[state.view]||openTareaForm)();}
+    const Views = {};
+    Views.dashboard = {title:'Dashboard BI', subtitle:'Centro de mando operativo', render(){ const k=BIService.kpis(); const risks=EmpresaService.risks().slice(0,5); const tasks=BIService.nextActions(); return `${head('Dashboard BI','Indicadores integrados desde Empresas, Ventas, Oportunidades, Tareas y Formularios.')}<div class="grid grid-4"><div class="card pad kpi" style="--k:var(--info)"><div class="kpi-v">${k.empresas}</div><div class="kpi-l">Empresas activas</div><div class="kpi-foot">Base central CRM</div></div><div class="card pad kpi" style="--k:var(--ok)"><div class="kpi-v">${money(k.ventasMes)}</div><div class="kpi-l">Ventas del mes</div><div class="kpi-foot">Automático desde ventas</div></div><div class="card pad kpi" style="--k:var(--warn)"><div class="kpi-v">${money(k.pipeline)}</div><div class="kpi-l">Pipeline estimado</div><div class="kpi-foot">Oportunidades abiertas</div></div><div class="card pad kpi" style="--k:var(--err)"><div class="kpi-v">${k.riesgo}</div><div class="kpi-l">Cuentas en riesgo</div><div class="kpi-foot">Sin visita o bajo score</div></div></div><div class="grid grid-2" style="margin-top:14px"><div class="card"><div class="card-hd"><div><div class="card-title">Próximas acciones</div><div class="card-sub">Ordenadas por vencimiento</div></div></div><div class="card pad"><div class="timeline">${tasks.map(t=>taskLine(t)).join('') || empty('ti-clipboard','No hay tareas pendientes')}</div></div></div><div class="card"><div class="card-hd"><div><div class="card-title">Alertas BI</div><div class="card-sub">Riesgo por recencia y potencial</div></div></div><div class="card pad"><div class="risk-list">${risks.map(x=>`<div class="risk"><i class="ti ti-alert-triangle" style="color:${x.dias>60?'var(--err)':'var(--warn)'}"></i><div style="flex:1"><strong>${esc(x.empresa.nombre)}</strong><div class="small">${x.dias} días sin visita · Score ${x.score}/100</div><div class="metric-bar" style="margin-top:8px"><span style="width:${x.score}%"></span></div></div></div>`).join('') || empty('ti-shield-check','Sin alertas críticas')}</div></div></div></div><div style="margin-top:14px">${microservicesView()}</div>`; }};
+    Views.empresas = {title:'Empresas 360°', subtitle:'Núcleo maestro del CRM', render(){ const rows=EmpresaService.all(); return `${head('Empresas 360°','Cada empresa concentra contactos, visitas, ventas, formularios, tareas y oportunidades.','App.Forms.empresaForm()','Nueva empresa')}<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Empresa</th><th>Tipo</th><th>Ciudad</th><th>Potencial</th><th>Última visita</th><th>Contacto</th><th>Acciones</th></tr></thead><tbody>${rows.map(e=>`<tr><td><strong>${esc(e.nombre)}</strong><br><span class="small">${CompanyCatalog[e.owner]?.name||e.owner}</span></td><td><span class="pill info">${esc(e.tipo)}</span></td><td>${esc(e.ciudad)}</td><td><strong>${EmpresaService.score(e)}/100</strong><div class="metric-bar" style="margin-top:6px"><span style="width:${EmpresaService.score(e)}%"></span></div></td><td>${fmtDate(e.ultimaVisita)}<br><span class="small">${daysSince(e.ultimaVisita)} días</span></td><td>${esc(e.contacto||'—')}<br><span class="small">${esc(e.telefono||e.email||'')}</span></td><td><div class="actions"><button class="btn btn-sm" onclick="App.Router.company('${e.id}')">Ver</button><button class="btn btn-sm" onclick="App.Forms.empresaForm('${e.id}')">Editar</button><button class="btn btn-sm" onclick="App.Forms.visitaForm('${e.id}')">Visita</button></div></td></tr>`).join('')}</tbody></table></div></div>`; }};
+    Views.company = {title:'Ficha empresa', subtitle:'Vista 360°', render(id){ const e=EmpresaService.byId(id)||EmpresaService.all()[0]; if(!e) return empty('ti-building','No hay empresas'); const opp=OportunidadService.raw().filter(o=>o.empresaId===e.id), tasks=TareaService.raw().filter(t=>t.empresaId===e.id), visits=VisitaService.raw().filter(v=>v.empresaId===e.id), forms=FormularioService.raw().filter(f=>f.empresaId===e.id), sales=VentaService.raw().filter(v=>v.empresaId===e.id); return `${head(e.nombre,`${e.tipo} · ${e.ciudad} · Score ${EmpresaService.score(e)}/100`)}<div class="company-hero"><div class="card pad"><div style="display:flex;gap:12px;align-items:flex-start"><div class="avatar">${esc(e.nombre[0]||'E')}</div><div><h2>${esc(e.nombre)}</h2><p class="small">${esc(e.direccion||'Sin dirección')} · ${esc(e.contacto||'Sin contacto')}</p><div class="actions" style="margin-top:12px"><a class="btn btn-sm" href="tel:${esc(e.telefono)}"><i class="ti ti-phone"></i>Llamar</a><a class="btn btn-sm" href="mailto:${esc(e.email)}"><i class="ti ti-mail"></i>Email</a><button class="btn btn-sm" onclick="App.Forms.visitaForm('${e.id}')"><i class="ti ti-map-pin"></i>Visita</button><button class="btn btn-sm" onclick="App.Forms.empresaForm('${e.id}')"><i class="ti ti-pencil"></i>Editar</button></div></div></div><div class="grid grid-3" style="margin-top:16px"><div><span class="small">Camas</span><h2>${e.camas||0}</h2></div><div><span class="small">Empleados</span><h2>${e.empleados||0}</h2></div><div><span class="small">Última visita</span><h2>${daysSince(e.ultimaVisita)}d</h2></div></div></div><div class="card pad"><h3>Próxima mejor acción</h3><p class="small" style="margin:8px 0 14px">${tasks[0]?.titulo || (daysSince(e.ultimaVisita)>30?'Agendar visita de seguimiento':'Mantener monitoreo comercial')}</p><div class="metric-bar"><span style="width:${EmpresaService.score(e)}%"></span></div><p class="small" style="margin-top:8px">Score comercial ${EmpresaService.score(e)}/100</p></div></div><div class="grid grid-4" style="margin-top:14px"><div class="card pad"><span class="small">Oportunidades</span><h2>${opp.length}</h2></div><div class="card pad"><span class="small">Tareas</span><h2>${tasks.length}</h2></div><div class="card pad"><span class="small">Formularios</span><h2>${forms.length}</h2></div><div class="card pad"><span class="small">Ventas</span><h2>${money(sales.reduce((s,x)=>s+Number(x.monto||0),0))}</h2></div></div><div class="grid grid-2" style="margin-top:14px"><div class="card pad"><h3>Historial de visitas</h3><div class="timeline" style="margin-top:12px">${visits.map(v=>`<div class="tl"><div class="tl-icon"><i class="ti ti-map-pin"></i></div><div class="tl-body"><strong>${fmtDate(v.fecha)} · ${esc(v.motivo)}</strong><br><small>${esc(v.resultado)} · ${esc(v.proximosPasos)}</small></div></div>`).join('')||empty('ti-map-pin','Sin visitas')}</div></div><div class="card pad"><h3>Tareas relacionadas</h3><div class="timeline" style="margin-top:12px">${tasks.map(taskLine).join('')||empty('ti-check','Sin tareas')}</div></div></div>`; }};
+    Views.pipeline = {title:'CRM Pipeline', subtitle:'Oportunidades comerciales por etapa', render(){ const f=BIService.funnel(); return `${head('CRM Pipeline','Arrastra mentalmente el flujo comercial: prospecto → contacto → propuesta → negociación → ganada.','App.Forms.oportunidadForm()','Nueva oportunidad')}<div class="pipeline">${f.map(col=>`<div class="stage"><div class="stage-hd"><strong>${col.stage}</strong><span class="pill">${col.items.length}</span></div>${col.items.map(o=>{const e=EmpresaService.byId(o.empresaId);return `<div class="deal"><strong>${esc(o.titulo)}</strong><small>${esc(e?.nombre||'—')}</small><div style="margin-top:8px"><span class="pill ok">${money(o.valor)}</span> <span class="pill">${o.probabilidad}%</span></div></div>`}).join('')}</div>`).join('')}</div>`; }};
+    Views.tareas = {title:'Tareas', subtitle:'Seguimiento conectado a empresas', render(){ const rows=TareaService.all(); return `${head('Tareas y seguimiento','Cada tarea puede conectarse a una empresa y alimentar el dashboard.','App.Forms.tareaForm()','Nueva tarea')}<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Tarea</th><th>Empresa</th><th>Prioridad</th><th>Vence</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${rows.map(t=>{const e=EmpresaService.byId(t.empresaId);return `<tr><td><strong>${esc(t.titulo)}</strong><br><span class="small">${esc(t.tipo)}</span></td><td>${esc(e?.nombre||'—')}</td><td><span class="pill ${t.prioridad==='alta'?'err':t.prioridad==='media'?'warn':'info'}">${esc(t.prioridad)}</span></td><td>${fmtDate(t.vence)}</td><td>${esc(t.estado)}</td><td><button class="btn btn-sm btn-ok" onclick="App.Services.Tarea.complete('${t.id}');App.Router.render()">Completar</button></td></tr>`}).join('')}</tbody></table></div></div>`; }};
+    Views.rutas = {title:'Campo & rutas', subtitle:'Priorización por zona, recencia y potencial', render(){ const rows=EmpresaService.all().filter(e=>e.latitud&&e.longitud).sort((a,b)=>EmpresaService.score(b)-EmpresaService.score(a)); setTimeout(()=>MapService.render(rows),50); return `${head('Campo & rutas','Mapa operativo con clientes priorizados para trabajo de campo.','App.Forms.visitaForm()','Registrar visita')}<div class="grid grid-2"><div class="card pad"><div id="map" class="map"></div></div><div class="card pad"><h3>Ruta sugerida</h3><div class="timeline" style="margin-top:12px">${rows.map((e,i)=>`<div class="tl"><div class="tl-icon">${i+1}</div><div class="tl-body"><strong>${esc(e.nombre)}</strong><br><small>${esc(e.ciudad)} · ${daysSince(e.ultimaVisita)} días sin visita · Score ${EmpresaService.score(e)}</small></div></div>`).join('')}</div></div></div>`; }};
+    Views.formularios = {title:'Formularios', subtitle:'Operativos y analíticos', render(){ const rows=FormularioService.all(); return `${head('Formularios operativos','Evaluación del Servicio, TPN e Inspección conectados a Empresas.')}<div class="grid grid-3"><div class="card pad"><h3>Evaluación del Servicio</h3><p class="small">Genera link y registra score de satisfacción.</p><button class="btn btn-sm" style="margin-top:12px">Crear</button></div><div class="card pad"><h3>Formulario TPN</h3><p class="small">Captura clínica tabulable para análisis posterior.</p><button class="btn btn-sm" style="margin-top:12px">Crear</button></div><div class="card pad"><h3>Inspección de sucursales</h3><p class="small">Checklist estructurado con acciones correctivas.</p><button class="btn btn-sm" style="margin-top:12px">Crear</button></div></div><div class="card" style="margin-top:14px"><div class="table-wrap"><table class="table"><thead><tr><th>Formulario</th><th>Empresa</th><th>Fecha</th><th>Score</th><th>Estado</th><th>Acción</th></tr></thead><tbody>${rows.map(f=>{const e=EmpresaService.byId(f.empresaId);return `<tr><td><strong>${esc(f.tipo)}</strong></td><td>${esc(e?.nombre||'—')}</td><td>${fmtDate(f.fecha)}</td><td>${f.score}/100</td><td><span class="pill warn">${esc(f.estado)}</span></td><td>${esc(f.accion)}</td></tr>`}).join('')}</tbody></table></div></div>`; }};
+    Views.reportes = {title:'Reportes BI', subtitle:'Análisis comercial', render(){ const ventas=VentaService.all(); const total=ventas.reduce((s,v)=>s+Number(v.monto||0),0); return `${head('Reportes BI','Visión resumida para decisiones comerciales.')}<div class="grid grid-3"><div class="card pad"><span class="small">Ventas registradas</span><h2>${money(total)}</h2></div><div class="card pad"><span class="small">Ticket promedio</span><h2>${money(total/(ventas.length||1))}</h2></div><div class="card pad"><span class="small">Cuentas con formularios</span><h2>${new Set(FormularioService.all().map(f=>f.empresaId)).size}</h2></div></div><div class="card pad" style="margin-top:14px"><h3>Ventas recientes</h3><div class="timeline" style="margin-top:12px">${ventas.map(v=>{const e=EmpresaService.byId(v.empresaId);return `<div class="tl"><div class="tl-icon"><i class="ti ti-cash"></i></div><div class="tl-body"><strong>${money(v.monto)} · ${esc(v.producto)}</strong><br><small>${esc(e?.nombre||'—')} · ${fmtDate(v.fecha)}</small></div></div>`}).join('')}</div></div>`; }};
+    Views.importar = {title:'Importar datos', subtitle:'JSON tolerante a campos en español', render(){ return `${head('Importar datos','Carga empresas desde JSON. Acepta claves como Nombre, Tipo, Ciudad, Camas, Latitud y Longitud.')}<div class="card pad"><div id="drop" class="drop"><i class="ti ti-file-import"></i><h3>Arrastra un JSON aquí</h3><p class="small">También puedes pegar el contenido abajo.</p></div><textarea id="importText" class="textarea" style="margin-top:14px;min-height:180px" placeholder='[{"Nombre":"Hospital...","Tipo":"Salud"}]'></textarea><div class="actions" style="margin-top:12px"><button class="btn btn-primary" onclick="App.Actions.importJSON()">Importar empresas</button><button class="btn" onclick="App.Actions.exportJSON()">Exportar backup</button></div></div>`; }};
+    Views.sync = {title:'Sincronización', subtitle:'GitHub Gist robusto', render(){ const c=GistSyncService.getConfig(); return `${head('Sincronización GitHub Gist','Token local con permiso gist. El token no se exporta ni se sube al Gist.')}<div class="grid grid-2"><div class="card pad"><h3>Configuración</h3><div class="form-grid" style="margin-top:12px"><div><label class="label">Token GitHub</label><input id="g_token" class="input" type="password" value="${esc(c.token)}" placeholder="ghp_... / fine-grained token"></div><div><label class="label">Gist ID</label><input id="g_id" class="input" value="${esc(c.gistId)}" placeholder="Se llena al crear Gist"></div><div><label class="label">Archivo dentro del Gist</label><input id="g_file" class="input" value="${esc(c.gistFile||'ge-business-hub-pro.json')}"></div><div class="actions"><button class="btn" onclick="App.Actions.saveSyncConfig()">Guardar config</button><button class="btn" onclick="App.Actions.testSync()">Probar conexión</button><button class="btn btn-primary" onclick="App.Actions.createGist()">Crear Gist</button></div></div></div><div class="card pad"><h3>Operaciones</h3><p class="small" style="margin:8px 0">Última sincronización: ${c.lastSyncAt ? new Date(c.lastSyncAt).toLocaleString('es-DO') : 'Nunca'}</p><div class="actions"><button class="btn btn-ok" onclick="App.Actions.uploadGist()"><i class="ti ti-cloud-upload"></i>Subir datos</button><button class="btn btn-warn" onclick="App.Actions.downloadGist()"><i class="ti ti-cloud-download"></i>Bajar datos</button></div><div class="risk" style="margin-top:14px"><i class="ti ti-shield-lock" style="color:var(--ok)"></i><div><strong>Seguridad aplicada</strong><p class="small">El token se guarda en localStorage separado y se excluye de exportaciones/backups.</p></div></div></div></div>`; }};
+    Views.arquitectura = {title:'Arquitectura modular', subtitle:'Micro-servicios internos', render(){ return `${head('Arquitectura modular del código','Cada módulo opera como micro-servicio interno independiente dentro del mismo index.html.')} ${microservicesView()}`; }};
 
-    function normalizeEmpresa(r){return {id:r.id||uid('emp'),grupo:r.grupo||r.EmpresaGE||'hemocura',nombre:r.Nombre||r.nombre||'',tipo:r.Tipo||r.tipo||'Salud',sector:r.Sector||r.sector||'',ciudad:r.Ciudad||r.ciudad||'',direccion:r['Dirección']||r.Direccion||r.direccion||'',empleados:Number(r.Empleados||r.empleados||0),camas:Number(r.Camas||r.camas||0),telefono:r['Teléfono']||r.Telefono||r.telefono||'',email:cleanEmail(r.Email||r.email||''),contacto:r.Contacto||r.contacto||'',prioridad:r.Prioridad||r.prioridad||'Media',latitud:Number(r.Latitud||r.latitud)||null,longitud:Number(r.Longitud||r.longitud)||null,notas:r.Notas||r.notas||'',lastVisit:r.lastVisit||'',score:Number(r.score||75),createdAt:todayISO()}}
-    function cleanEmail(v){v=String(v||'').trim().replace(/\.gm$/i,'.gmail.com').replace(/\.gmail$/i,'.gmail.com'); return v.includes('/')?v.split('/')[0].trim():v;}
-    function importJSONText(text){let arr; try{arr=JSON.parse(text)}catch(e){throw new Error('JSON inválido: '+e.message)} if(!Array.isArray(arr)) arr=[arr]; let ok=0, bad=[]; arr.forEach((r,i)=>{const e=normalizeEmpresa(r); if(!e.nombre){bad.push(i+1); return;} const existing=state.empresas.find(x=>x.nombre.toLowerCase()===e.nombre.toLowerCase()); if(existing) Object.assign(existing,e,{id:existing.id,createdAt:existing.createdAt}); else state.empresas.push(e); ok++;}); save(); return {ok,bad};}
-    function importPastedJSON(){try{const res=importJSONText(val('jsonPaste')); document.getElementById('importResult').innerHTML=`<div class="pill ok">${res.ok} registros importados</div> ${res.bad.length?`<span class="pill err">Filas sin nombre: ${res.bad.join(', ')}</span>`:''}`; renderNav();}catch(e){document.getElementById('importResult').innerHTML=`<div class="pill err">${escapeHTML(e.message)}</div>`}}
-    function handleDrop(ev){ev.preventDefault(); document.getElementById('drop').classList.remove('drag'); const file=ev.dataTransfer.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{document.getElementById('jsonPaste').value=reader.result; importPastedJSON();}; reader.readAsText(file);}
-    function downloadTemplate(){downloadFile('plantilla_empresas_ge.json', JSON.stringify([{Nombre:'Hospital Ejemplo',Tipo:'Salud',Sector:'Hospital privado',Ciudad:'Santiago',Dirección:'Av. Ejemplo',Empleados:100,Camas:50,Teléfono:'809-000-0000',Email:'contacto@ejemplo.com',Contacto:'Nombre decisor',Prioridad:'Alta',Latitud:19.45,Longitud:-70.70,Notas:'Notas comerciales'}],null,2));}
-    function sanitizeForBackup(data){const copy=structuredClone(data); copy.gist={...(copy.gist||{}), token:''}; return copy;}
-    function exportJSON(scope){const data = scope==='empresas'?state.empresas:sanitizeForBackup(state); downloadFile(`ge-business-hub-${scope}-${todayISO()}.json`, JSON.stringify(data,null,2));}
-    function downloadFile(name,content){const blob=new Blob([content],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href);}
-    function restoreBackup(ev){const file=ev.target.files[0]; if(!file)return; const currentGist=structuredClone(state.gist||{}); const r=new FileReader(); r.onload=()=>{try{const data=JSON.parse(r.result); const importedGist=data.gist||{}; state={...structuredClone(seedData),...data,gist:{...currentGist,id:importedGist.id||currentGist.id||'',file:importedGist.file||currentGist.file||'ge-business-hub-pro.json'}}; save();render();toast('Backup restaurado','ok')}catch(e){toast('Backup inválido','err')}}; r.readAsText(file);}
+    const MapService = (() => { let map; return { render(rows){ const el=document.getElementById('map'); if(!el || typeof L==='undefined') return; if(map){ map.remove(); map=null; } map=L.map(el).setView([19.45,-70.69],12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map); rows.forEach(e=>L.marker([e.latitud,e.longitud]).addTo(map).bindPopup(`<strong>${esc(e.nombre)}</strong><br>${esc(e.ciudad)}<br>Score ${EmpresaService.score(e)}`)); setTimeout(()=>map.invalidateSize(),120); }}; })();
 
-    function updateGistSetting(key,value){state.gist={...(state.gist||{}),[key]:String(value||'').trim()}; localStorage.setItem(STORE_KEY, JSON.stringify(state)); renderSync();}
-    function setGistStatus(msg,type='info'){const el=document.getElementById('gistStatus'); if(el) el.innerHTML=`<span class="pill ${type}">${escapeHTML(msg)}</span>`;}
-    function gistHeaders(){return {Authorization:`Bearer ${state.gist.token}`,Accept:'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'};}
-    function requireGistToken(){if(!navigator.onLine){toast('Sin conexión a internet','warn'); return false;} if(!state.gist?.token){toast('Configura un token GitHub con permiso gist','warn'); setGistStatus('Falta token GitHub','warn'); return false;} return true;}
-    function requireGistConfig(){if(!requireGistToken())return false; if(!state.gist?.id){toast('Configura o crea un Gist primero','warn'); setGistStatus('Falta Gist ID. Usa Crear Gist o pega el ID existente.','warn'); return false;} if(!state.gist?.file)updateGistSetting('file','ge-business-hub-pro.json'); return true;}
-    async function parseGitHubError(res){let detail=''; try{const data=await res.json(); detail=data.message||JSON.stringify(data);}catch(e){detail=await res.text().catch(()=>'');} const map={401:'Token inválido o expirado. Genera un token nuevo con permiso gist.',403:'Permiso denegado o límite de GitHub alcanzado. Verifica que el token tenga permiso gist.',404:'Gist no encontrado. Revisa el Gist ID o crea uno nuevo.',422:'Solicitud inválida. Revisa el nombre del archivo y el contenido.'}; return `${map[res.status]||'Error de GitHub'} (${res.status})${detail?': '+detail:''}`;}
-    function gistPayload(){const content=sanitizeForBackup(state); content.gist={...(content.gist||{}),id:state.gist.id||'',file:state.gist.file||'ge-business-hub-pro.json',token:''}; return JSON.stringify(content,null,2);}
-    async function gistCreate(){if(!requireGistToken())return; try{setGistStatus('Creando Gist...','info'); const file=state.gist.file||'ge-business-hub-pro.json'; const res=await fetch('https://api.github.com/gists',{method:'POST',headers:gistHeaders(),body:JSON.stringify({description:'GE Business Hub Pro CRM backup',public:false,files:{[file]:{content:gistPayload()}}})}); if(!res.ok)throw new Error(await parseGitHubError(res)); const data=await res.json(); state.gist={...state.gist,id:data.id,file,lastSync:new Date().toISOString()}; save(); render(); toast('Gist creado y configurado','ok'); setGistStatus(`Gist creado: ${data.id}`,'ok');}catch(e){console.error(e); toast('Error al crear Gist','err'); setGistStatus(e.message,'err');}}
-    async function gistUpload(){if(!requireGistConfig())return; try{setGistStatus('Subiendo datos a GitHub Gist...','info'); const file=state.gist.file||'ge-business-hub-pro.json'; const res=await fetch(`https://api.github.com/gists/${encodeURIComponent(state.gist.id)}`,{method:'PATCH',headers:gistHeaders(),body:JSON.stringify({description:'GE Business Hub Pro CRM backup',files:{[file]:{content:gistPayload()}}})}); if(!res.ok)throw new Error(await parseGitHubError(res)); state.gist.lastSync=new Date().toISOString(); save(); renderSync(); toast('Datos subidos a Gist','ok'); setGistStatus('Datos subidos correctamente','ok');}catch(e){console.error(e); toast('Error al subir Gist','err'); setGistStatus(e.message,'err');}}
-    async function gistDownload(){if(!requireGistConfig())return; try{setGistStatus('Descargando datos desde GitHub Gist...','info'); const res=await fetch(`https://api.github.com/gists/${encodeURIComponent(state.gist.id)}`,{headers:gistHeaders()}); if(!res.ok)throw new Error(await parseGitHubError(res)); const data=await res.json(); let file=data.files?.[state.gist.file]; if(!file){const names=Object.keys(data.files||{}); if(names.length===1){file=data.files[names[0]]; state.gist.file=names[0];} } if(!file)throw new Error(`Archivo ${state.gist.file} no encontrado dentro del Gist.`); let content=file.content; if(file.truncated && file.raw_url){const raw=await fetch(file.raw_url,{headers:{Authorization:`Bearer ${state.gist.token}`}}); if(!raw.ok)throw new Error('No se pudo leer el archivo completo del Gist.'); content=await raw.text();} if(!content)throw new Error('El archivo del Gist está vacío o no tiene contenido legible.'); const incoming=JSON.parse(content); const keepGist={...state.gist,lastSync:new Date().toISOString()}; state={...structuredClone(seedData),...incoming,gist:keepGist}; save(); render(); toast('Datos descargados de Gist','ok'); setGistStatus('Datos descargados correctamente','ok');}catch(e){console.error(e); toast('Error al bajar Gist','err'); setGistStatus(e.message,'err');}}
-    async function gistTest(){if(!requireGistConfig())return; try{setGistStatus('Probando conexión...','info'); const res=await fetch(`https://api.github.com/gists/${encodeURIComponent(state.gist.id)}`,{headers:gistHeaders()}); if(!res.ok)throw new Error(await parseGitHubError(res)); const data=await res.json(); const files=Object.keys(data.files||{}).join(', ')||'sin archivos'; toast('Conexión correcta','ok'); setGistStatus(`Conexión correcta. Archivos: ${files}`,'ok');}catch(e){console.error(e); toast('Error de conexión Gist','err'); setGistStatus(e.message,'err');}}
-    function resetData(){if(confirm('¿Restablecer datos demo?')){localStorage.removeItem(STORE_KEY); state=structuredClone(seedData); render(); toast('Datos restablecidos','warn')}}
+    const Router = (() => {
+      const routes = {dashboard:Views.dashboard, empresas:Views.empresas, pipeline:Views.pipeline, tareas:Views.tareas, rutas:Views.rutas, formularios:Views.formularios, reportes:Views.reportes, importar:Views.importar, sync:Views.sync, arquitectura:Views.arquitectura};
+      function go(view){ StateService.set('ui.view', view); render(); UI.toggleSidebar(false); }
+      function company(id){ StateService.set('ui.view','company:'+id); render(); }
+      function current(){ return StateService.get().ui.view || 'dashboard'; }
+      function render(){
+        const main=document.getElementById('main');
+        try{
+          const view=current();
+          const [name,arg] = String(view).split(':');
+          const v = name==='company' ? Views.company : routes[name] || Views.dashboard;
+          document.getElementById('pageTitle').textContent = v.title || 'GE Business Hub Pro';
+          document.getElementById('pageSubtitle').textContent = v.subtitle || 'CRM modular';
+          main.innerHTML = v.render(arg);
+        } catch(err){
+          console.error('Error renderizando módulo', err);
+          document.getElementById('pageTitle').textContent = 'Error del módulo';
+          document.getElementById('pageSubtitle').textContent = 'La app sigue activa; revisa el detalle abajo.';
+          main.innerHTML = `<div class="card pad"><h2>No se pudo visualizar esta sección</h2><p class="small" style="margin-top:8px">${esc(err.message || err)}</p><div class="actions" style="margin-top:14px"><button class="btn btn-primary" onclick="App.Router.go('dashboard')">Volver al dashboard</button><button class="btn" onclick="App.Services.State.replace(App.Services.DemoData.build());App.Router.render()">Restablecer datos demo</button></div></div>`;
+        }
+        UI.renderNav(); UI.renderCompanySelector(); UI.applyTheme(false);
+      }
+      return {go,company,render,current,routes};
+    })();
 
-    function openCommand(){document.getElementById('cmd').classList.add('show'); document.getElementById('cmdInput').value=''; renderCommand(); setTimeout(()=>document.getElementById('cmdInput').focus(),50)}
-    function closeCommand(ev){if(!ev || ev.target.id==='cmd')document.getElementById('cmd').classList.remove('show')}
-    function renderCommand(){const q=(document.getElementById('cmdInput').value||'').toLowerCase(); const rows=[]; navItems.forEach(i=>{if(i[3].toLowerCase().includes(q))rows.push({icon:i[2],title:i[3],sub:'Módulo',act:`go('${i[1]}');document.getElementById('cmd').classList.remove('show')`})}); state.empresas.forEach(e=>{if([e.nombre,e.ciudad,e.sector].join(' ').toLowerCase().includes(q))rows.push({icon:'ti-building',title:e.nombre,sub:`${e.tipo} · ${e.ciudad}`,act:`openEmpresaDetail('${e.id}');document.getElementById('cmd').classList.remove('show')`})}); state.tareas.forEach(t=>{if(t.titulo.toLowerCase().includes(q))rows.push({icon:'ti-clipboard-list',title:t.titulo,sub:empresaName(t.empresaId),act:`go('tareas');document.getElementById('cmd').classList.remove('show')`})}); document.getElementById('cmdResults').innerHTML=rows.slice(0,20).map(r=>`<div class="cmd-item" onclick="${r.act}"><i class="ti ${r.icon}" style="font-size:22px;color:var(--active-color)"></i><div><strong>${escapeHTML(r.title)}</strong><div style="color:var(--muted);font-size:12px">${escapeHTML(r.sub)}</div></div></div>`).join('')||empty('Sin resultados');}
-    window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()} if(e.key==='Escape'){closeModal();document.getElementById('cmd').classList.remove('show')}});
+    const UI = (() => {
+      const navGroups = [{label:'Principal',items:[['dashboard','ti-layout-dashboard','Dashboard BI'],['rutas','ti-map-2','Campo & rutas'],['empresas','ti-building','Empresas 360°']]},{label:'Gestión',items:[['pipeline','ti-users','CRM Pipeline'],['tareas','ti-clipboard-list','Tareas'],['formularios','ti-forms','Formularios']]},{label:'Análisis y datos',items:[['reportes','ti-report-analytics','Reportes BI'],['importar','ti-file-import','Importar'],['sync','ti-cloud','Sincronizar'],['arquitectura','ti-topology-star-3','Arquitectura']]}];
+      function renderNav(){ const q=(document.getElementById('navSearch')?.value||'').toLowerCase(); const current=Router.current().split(':')[0]; document.getElementById('nav').innerHTML = navGroups.map(g=>{ const items=g.items.filter(i=>i[2].toLowerCase().includes(q)); if(!items.length) return ''; return `<div class="nav-section">${g.label}</div>${items.map(([id,icon,label])=>`<button class="nav-btn ${current===id?'active':''}" onclick="App.Router.go('${id}')"><i class="ti ${icon}"></i>${label}${id==='tareas'&&TareaService.pending().length?`<span class="badge">${TareaService.pending().length}</span>`:''}</button>`).join('')}`; }).join(''); }
+      function renderCompanySelector(){ const active=StateService.get().ui.activeCompany; const box=document.getElementById('companySelector'); box.innerHTML=Object.entries(CompanyCatalog).map(([k,c])=>`<button class="company-btn ${active===k?'active':''}" onclick="App.UI.setCompany('${k}')"><span class="dot" style="--c:${c.color}"></span>${c.name}</button>`).join(''); document.getElementById('activeCompanyLabel').textContent = CompanyCatalog[active]?.name || 'Grupo GE'; document.documentElement.style.setProperty('--active-color', CompanyCatalog[active]?.color || 'var(--accent)'); }
+      function setCompany(k){ StateService.set('ui.activeCompany',k); Router.render(); }
+      function toggleSidebar(force){ const sb=document.getElementById('sidebar'), ov=document.getElementById('mobileOverlay'); const open = force ?? !sb.classList.contains('open'); sb.classList.toggle('open',open); ov.classList.toggle('show',open); }
+      function toggleTheme(){ const t=StateService.get().ui.theme==='light'?'dark':'light'; StateService.set('ui.theme',t); applyTheme(); }
+      function applyTheme(refreshSelector=true){
+        const state = StateService.get();
+        document.documentElement.dataset.theme = state.ui?.theme || 'dark';
+        if(refreshSelector) renderCompanySelector();
+        const dot=document.getElementById('syncDot'); const label=document.getElementById('syncLabel');
+        if(!dot || !label) return;
+        const st=state.sync?.status||'synced';
+        dot.style.background = st==='error'?'var(--err)':st==='pending'?'var(--warn)':'var(--ok)';
+        label.textContent = st==='error'?'Error sync':st==='pending'?'Pendiente':'Al día';
+      }
+      function quickAdd(){ const v=Router.current().split(':')[0]; if(v==='tareas') Forms.tareaForm(); else if(v==='pipeline') Forms.oportunidadForm(); else if(v==='rutas') Forms.visitaForm(); else Forms.empresaForm(); }
+      function openCommand(){ document.getElementById('cmd').classList.add('show'); document.getElementById('cmdInput').focus(); renderCommand(); }
+      function closeCommand(e){ if(!e || e.target.id==='cmd') document.getElementById('cmd').classList.remove('show'); }
+      function renderCommand(){ const q=(document.getElementById('cmdInput')?.value||'').toLowerCase(); const results=[...Object.entries(Router.routes).map(([id,v])=>({type:'Módulo',label:v.title,go:()=>Router.go(id)})),...EmpresaService.all().map(e=>({type:'Empresa',label:e.nombre,go:()=>Router.company(e.id)})),...TareaService.all().map(t=>({type:'Tarea',label:t.titulo,go:()=>Router.go('tareas')}))].filter(x=>x.label.toLowerCase().includes(q)).slice(0,20); document.getElementById('cmdResults').innerHTML = results.map((r,i)=>`<div class="cmd-item" onclick="App.UI.commandGo(${i})"><div class="avatar" style="width:34px;height:34px;border-radius:12px">${r.type[0]}</div><div><strong>${esc(r.label)}</strong><div class="small">${r.type}</div></div></div>`).join('') || empty('ti-search','Sin resultados'); UI._cmdResults=results; }
+      function commandGo(i){ UI._cmdResults[i]?.go(); closeCommand(); }
+      return {renderNav,renderCompanySelector,setCompany,toggleSidebar,toggleTheme,applyTheme,quickAdd,openCommand,closeCommand,renderCommand,commandGo,_cmdResults:[]};
+    })();
 
-    render();
+    const Actions = (() => {
+      function importJSON(){ try{ const txt=document.getElementById('importText').value.trim(); if(!txt) throw new Error('Pega un JSON primero.'); const data=JSON.parse(txt); const rows=Array.isArray(data)?data:(data.empresas||[]); const ok=EmpresaService.importRows(rows); Router.render(); ToastService.show(`${ok} empresas importadas`,'ok'); } catch(e){ ToastService.show(e.message,'err'); } }
+      function exportJSON(){ const blob=new Blob([JSON.stringify(StorageService.exportSafe(StateService.get()),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ge-business-hub-pro-backup.json'; a.click(); URL.revokeObjectURL(a.href); }
+      function saveSyncConfig(){ GistSyncService.setConfig({token:val('g_token'),gistId:val('g_id'),gistFile:val('g_file')}); ToastService.show('Configuración guardada','ok'); Router.render(); }
+      async function testSync(){ try{ saveSyncConfig(); const me=await GistSyncService.test(); ToastService.show(`Conexión OK: ${me.login}`,'ok'); } catch(e){ ToastService.show(syncError(e),'err'); } }
+      async function createGist(){ try{ saveSyncConfig(); const g=await GistSyncService.create(); ToastService.show(`Gist creado: ${g.id}`,'ok'); Router.render(); } catch(e){ ToastService.show(syncError(e),'err'); } }
+      async function uploadGist(){ try{ saveSyncConfig(); await GistSyncService.upload(); ToastService.show('Datos subidos al Gist','ok'); Router.render(); } catch(e){ ToastService.show(syncError(e),'err'); } }
+      async function downloadGist(){ try{ saveSyncConfig(); await GistSyncService.download(); ToastService.show('Datos descargados del Gist','ok'); Router.render(); } catch(e){ ToastService.show(syncError(e),'err'); } }
+      function syncError(e){ const m=String(e.message||e); if(m.includes('401')) return '401: token inválido o expirado.'; if(m.includes('403')) return '403: el token no tiene permiso gist o excediste el límite.'; if(m.includes('404')) return '404: Gist no encontrado o no tienes acceso.'; if(m.includes('422')) return '422: datos inválidos para crear/actualizar el Gist.'; return m; }
+      function val(id){ return document.getElementById(id)?.value?.trim() || ''; }
+      return {importJSON,exportJSON,saveSyncConfig,testSync,createGist,uploadGist,downloadGist};
+    })();
+
+    function head(title,desc,action,label){ return `<div class="section-head"><div><h1>${esc(title)}</h1><p>${esc(desc)}</p></div><div class="spacer"></div>${action?`<button class="btn btn-primary keep" onclick="${action}"><i class="ti ti-plus"></i><span>${label}</span></button>`:''}</div>`; }
+    function empty(icon,msg){ return `<div class="empty"><i class="ti ${icon}"></i>${esc(msg)}</div>`; }
+    function taskLine(t){ const e=EmpresaService.byId(t.empresaId); return `<div class="tl"><div class="tl-icon"><i class="ti ti-checklist"></i></div><div class="tl-body"><strong>${esc(t.titulo)}</strong><br><small>${esc(e?.nombre||'—')} · ${fmtDate(t.vence)} · ${esc(t.prioridad)}</small></div></div>`; }
+    function microservicesView(){ const cards=[['StateService','Estado único, patch por ruta, eventos de cambio'],['StorageService','Persistencia local y exportación segura'],['GistSyncService','Crear, subir, bajar y probar GitHub Gist'],['EmpresaService','CRUD, importación, score y riesgo'],['TareaService','Seguimiento y acciones pendientes'],['BIService','KPIs, funnel, riesgo y próxima acción'],['Router','Vistas independientes y renderizado'],['Views/*','Cada sección como módulo aislado actualizable']]; return `<div class="grid grid-4">${cards.map(c=>`<div class="card pad micro-card"><h3>${c[0]}</h3><p class="small" style="margin-top:8px">${c[1]}</p></div>`).join('')}</div>`; }
+
+    function init(){ window.addEventListener('online',()=>document.getElementById('offline').classList.remove('show')); window.addEventListener('offline',()=>document.getElementById('offline').classList.add('show')); document.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); UI.openCommand(); } if(e.key==='Escape'){ ModalService.close(); UI.closeCommand(); }}); Bus.on('state:changed',()=>UI.applyTheme()); Router.render(); }
+
+    return {init,Router,UI,Forms,Modal:ModalService,Toast:ToastService,Actions,Services:{DemoData,Empresa:EmpresaService,Contacto:ContactoService,Oportunidad:OportunidadService,Tarea:TareaService,Visita:VisitaService,Venta:VentaService,Formulario:FormularioService,BI:BIService,GistSync:GistSyncService,Storage:StorageService,State:StateService,Bus}};
+  })();
+  window.App = App;
+  document.addEventListener('DOMContentLoaded', App.init);
   </script>
 </body>
 </html>
