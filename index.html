@@ -228,10 +228,12 @@ const EventBus = (() => {
 const seedData = () => {
  const companies = Object.values(EMPRESAS);
  const branches = [
-  {id:"br_hc_stgo",empresaId:"hemocura",nombre:"Hemocura Sede Central",ciudad:"Santiago",direccion:"Av. Juan Pablo Duarte, Santiago",lat:19.4519,lng:-70.6974},
-  {id:"br_hc_guaz",empresaId:"hemocura",nombre:"Hemocura Guazumal / Tamboril",ciudad:"Santiago",direccion:"Carretera Santiago-Tamboril / Guazumal",lat:19.4938,lng:-70.6199},
-  {id:"br_hc_ten",empresaId:"hemocura",nombre:"Hemocura Tenares",ciudad:"Tenares",direccion:"Centro urbano Tenares",lat:19.379,lng:-70.076},
-  {id:"br_fs_stgo",empresaId:"farmaserv",nombre:"FarmaServ Logística Norte",ciudad:"Santiago",direccion:"Santiago de los Caballeros",lat:19.455,lng:-70.693}
+  {id:"br_hc_stgo",empresaId:"hemocura",nombre:"SANTIAGO",ciudad:"Santiago",direccion:"Santiago de los Caballeros",lat:19.4519,lng:-70.6974},
+  {id:"br_hc_ppl",empresaId:"hemocura",nombre:"PUERTO PLATA",ciudad:"Puerto Plata",direccion:"Puerto Plata",lat:19.7934,lng:-70.6884},
+  {id:"br_hc_ten",empresaId:"hemocura",nombre:"TENARES",ciudad:"Tenares",direccion:"Tenares, Hermanas Mirabal",lat:19.3790,lng:-70.0760},
+  {id:"br_fs_stgo",empresaId:"farmaserv",nombre:"SANTIAGO",ciudad:"Santiago",direccion:"Santiago de los Caballeros",lat:19.4550,lng:-70.6930},
+  {id:"br_fs_ppl",empresaId:"farmaserv",nombre:"PUERTO PLATA",ciudad:"Puerto Plata",direccion:"Puerto Plata",lat:19.7934,lng:-70.6884},
+  {id:"br_fs_ten",empresaId:"farmaserv",nombre:"TENARES",ciudad:"Tenares",direccion:"Tenares, Hermanas Mirabal",lat:19.3790,lng:-70.0760}
  ];
  const companyCycle = ["hemocura","farmaserv","sofa","equilibrium"];
  const contacts = SEED_PROSPECTS.map((p,i)=>{
@@ -263,7 +265,7 @@ const seedData = () => {
  );
  const tasks = [
   {id:"t1",empresaId:"hemocura",contactId:"ct_union",branchId:"br_hc_stgo",semanaId:1,titulo:"Visita de reactivación hemoderivados",fecha:today(),hora:"09:00",tipo:"visita",prioridad:"alta",estado:"pendiente",notas:"Verificar necesidad de paquete globular y plasma.",historico12Semanas:[],prevTaskId:""},
-  {id:"t2",empresaId:"hemocura",contactId:contacts.find(c=>c.empresaId==="hemocura"&&c.id!=="ct_union")?.id||"ct_union",branchId:"br_hc_guaz",semanaId:1,titulo:"Llamada seguimiento propuesta",fecha:today(),hora:"11:30",tipo:"llamada",prioridad:"media",estado:"pendiente",notas:"Confirmar respuesta del director médico.",historico12Semanas:[],prevTaskId:""},
+  {id:"t2",empresaId:"hemocura",contactId:contacts.find(c=>c.empresaId==="hemocura"&&c.id!=="ct_union")?.id||"ct_union",branchId:"br_hc_ppl",semanaId:1,titulo:"Llamada seguimiento propuesta",fecha:today(),hora:"11:30",tipo:"llamada",prioridad:"media",estado:"pendiente",notas:"Confirmar respuesta del director médico.",historico12Semanas:[],prevTaskId:""},
   {id:"t3",empresaId:"farmaserv",contactId:contacts.find(c=>c.empresaId==="farmaserv")?.id||contacts[0]?.id,branchId:"br_fs_stgo",semanaId:1,titulo:"Despacho FarmaServ y referidor",fecha:today(),hora:"14:00",tipo:"venta",prioridad:"alta",estado:"pendiente",notas:"Validar referidor y pedido.",historico12Semanas:[],prevTaskId:""},
   {id:"t4",empresaId:"hemocura",contactId:"ct_union",branchId:"br_hc_stgo",semanaId:1,titulo:"Entrega documentación institucional",fecha:today(),hora:"16:00",tipo:"visita",prioridad:"media",estado:"completada",notas:"Documentación entregada en recepción.",historico12Semanas:[],prevTaskId:""}
  ];
@@ -283,11 +285,58 @@ const seedData = () => {
  };
 };
 
+
+const normalizeBranchName = (name="") => {
+ const raw = String(name||"").trim();
+ const upper = raw.toUpperCase();
+ if(/PUERTO\s*PLATA|\bPP\b/.test(upper)) return "PUERTO PLATA";
+ if(/TENARES/.test(upper)) return "TENARES";
+ if(/SANTIAGO|SEDE|GUAZUMAL|TAMBORIL|LOG[IÍ]STICA\s*NORTE/.test(upper)) return "SANTIAGO";
+ return upper || "NUEVA SUCURSAL";
+};
+const normalizeState = (data) => {
+ const s = data && typeof data === "object" ? data : seedData();
+ const base = seedData();
+ ["companies","branches","contacts","tasks","sales","opportunities","weeks"].forEach(k=>{ if(!Array.isArray(s[k])) s[k]=base[k]; });
+ s.reports = s.reports && typeof s.reports === "object" ? s.reports : {tpn:[],inspections:[]};
+ s.settings = {...base.settings, ...(s.settings||{})};
+ s.activeCompany = s.activeCompany || "hemocura";
+ const replacements = {br_hc_guaz:"br_hc_ppl"};
+ s.branches = s.branches.map(b=>{
+  const replacedId = replacements[b.id] || b.id || uid("branch");
+  if(b.id === "br_hc_guaz") return {
+   ...b, id:"br_hc_ppl", empresaId:"hemocura", nombre:"PUERTO PLATA", ciudad:"Puerto Plata", direccion:"Puerto Plata", lat:19.7934, lng:-70.6884
+  };
+  return {
+   ...b,
+   id: replacedId,
+   empresaId: b.empresaId || s.activeCompany || "hemocura",
+   nombre: normalizeBranchName(b.nombre || b.ciudad),
+   ciudad: b.ciudad || normalizeBranchName(b.nombre || ""),
+   direccion: b.direccion || b.ciudad || "",
+   lat: Number(b.lat ?? b.Latitud ?? 19.4519) || 19.4519,
+   lng: Number(b.lng ?? b.Longitud ?? -70.6974) || -70.6974
+  };
+ });
+ const ensureBranch = (id, empresaId, nombre, ciudad, lat, lng) => {
+  if(!s.branches.some(b=>b.id===id)) s.branches.push({id,empresaId,nombre,ciudad,direccion:ciudad,lat,lng});
+ };
+ ensureBranch("br_hc_stgo","hemocura","SANTIAGO","Santiago",19.4519,-70.6974);
+ ensureBranch("br_hc_ppl","hemocura","PUERTO PLATA","Puerto Plata",19.7934,-70.6884);
+ ensureBranch("br_hc_ten","hemocura","TENARES","Tenares",19.3790,-70.0760);
+ ensureBranch("br_fs_stgo","farmaserv","SANTIAGO","Santiago",19.4550,-70.6930);
+ ensureBranch("br_fs_ppl","farmaserv","PUERTO PLATA","Puerto Plata",19.7934,-70.6884);
+ ensureBranch("br_fs_ten","farmaserv","TENARES","Tenares",19.3790,-70.0760);
+ s.tasks.forEach(t=>{ if(replacements[t.branchId]) t.branchId=replacements[t.branchId]; });
+ s.sales.forEach(v=>{ if(replacements[v.branchId]) v.branchId=replacements[v.branchId]; });
+ return s;
+};
+
 const Store = (() => {
  let state;
  const load = () => {
-   try { state = JSON.parse(localStorage.getItem(LS_KEY)) || seedData(); }
-   catch { state = seedData(); }
+   try { state = normalizeState(JSON.parse(localStorage.getItem(LS_KEY)) || seedData()); }
+   catch { state = normalizeState(seedData()); }
    persist(false);
  };
  const persist = (emit=true) => {
@@ -681,6 +730,34 @@ const Integrations = {
  copy(type){ navigator.clipboard?.writeText(JSON.stringify({type, ...Analytics.biPayload()},null,2)); UI.toast(`Payload ${type} copiado`); }
 };
 
+
+const Branches = {
+ current(){ return Context.scoped("branches").sort((a,b)=>a.nombre.localeCompare(b.nombre)); },
+ renderManager(){
+  const el=byId("branches-manager"); if(!el) return;
+  const rows=Branches.current();
+  el.innerHTML = `<div class="table-wrap"><table class="tbl"><thead><tr><th>Sucursal</th><th>Ciudad</th><th>Coordenadas</th><th></th></tr></thead><tbody>${rows.map(b=>`<tr><td><b>${esc(b.nombre)}</b><div class="item-meta">${esc(b.direccion||"")}</div></td><td>${esc(b.ciudad||"")}</td><td>${Number(b.lat||0).toFixed(4)}, ${Number(b.lng||0).toFixed(4)}</td><td><button class="btn sm" onclick="App.Branches.open('${b.id}')">Editar</button> <button class="btn sm" onclick="App.Branches.remove('${b.id}')">Eliminar</button></td></tr>`).join("")}</tbody></table></div><button class="btn primary" onclick="App.Branches.open()">+ Agregar sucursal</button>`;
+ },
+ open(id=""){
+  const active=Context.active();
+  const b=id?Store.get().branches.find(x=>x.id===id):{id:"",empresaId:active,nombre:"",ciudad:"",direccion:"",lat:19.4519,lng:-70.6974};
+  if(!b) return UI.toast("Sucursal no encontrada","err");
+  UI.modal(id?"Editar sucursal":"Nueva sucursal", `<div class="form-row"><div class="field"><label class="label">Nombre</label><input id="br-name" class="input" value="${esc(b.nombre||"")}" placeholder="SANTIAGO"></div><div class="field"><label class="label">Ciudad</label><input id="br-city" class="input" value="${esc(b.ciudad||"")}" placeholder="Santiago"></div></div><div class="form-row fr1"><div class="field"><label class="label">Dirección</label><input id="br-address" class="input" value="${esc(b.direccion||"")}"></div></div><div class="form-row"><div class="field"><label class="label">Latitud</label><input id="br-lat" class="input" type="number" step="0.000001" value="${esc(b.lat||"")}"></div><div class="field"><label class="label">Longitud</label><input id="br-lng" class="input" type="number" step="0.000001" value="${esc(b.lng||"")}"></div></div>`, `<button class="btn" onclick="App.UI.closeModal()">Cancelar</button><button class="btn primary" onclick="App.Branches.save('${id}')">Guardar</button>`);
+ },
+ save(id=""){
+  const active=Context.active();
+  const nombre=normalizeBranchName(byId("br-name").value || byId("br-city").value);
+  const rec={id:id||uid("branch"),empresaId:active,nombre,ciudad:byId("br-city").value.trim()||nombre,direccion:byId("br-address").value.trim(),lat:+byId("br-lat").value||19.4519,lng:+byId("br-lng").value||-70.6974};
+  Store.update(s=>{ const i=s.branches.findIndex(b=>b.id===rec.id); if(i>=0) s.branches[i]={...s.branches[i],...rec}; else s.branches.push(rec); },"branches:saved");
+  UI.closeModal(); UI.toast("Sucursal guardada"); Router.render("settings");
+ },
+ remove(id){
+  const used=Store.get().tasks.some(t=>t.branchId===id)||Store.get().sales.some(v=>v.branchId===id);
+  if(used) return UI.toast("No se puede eliminar: la sucursal tiene tareas o ventas vinculadas","err");
+  Store.remove("branches",id); UI.toast("Sucursal eliminada"); Router.render("settings");
+ }
+};
+
 const Settings = {
  render(){
   const cfg=Store.get().settings;
@@ -689,11 +766,13 @@ const Settings = {
     <div class="form-row fr1"><div class="field"><label class="label">GitHub PAT</label><input id="cfg-pat" class="input" type="password" value="${esc(cfg.pat)}" placeholder="github_pat_..."></div></div>
     <div class="form-row fr1"><div class="field"><label class="label">Gist ID</label><input id="cfg-gist" class="input" value="${esc(cfg.gistId)}"></div></div>
     <label><input id="cfg-auto" type="checkbox" ${cfg.autoSync?"checked":""}> Auto-sync silencioso</label><br><br>
-    <div class="actions"><button class="btn" onclick="App.Sync.saveConfig()">Guardar</button><button class="btn f" onclick="App.Sync.createGist()">Crear Gist</button><button class="btn primary" onclick="App.Sync.push()">Push</button><button class="btn" onclick="App.Sync.pull()">Pull</button></div>
+    <div class="actions"><button class="btn" onclick="App.Sync.saveConfig()">Guardar</button><button class="btn" onclick="App.Sync.test()">Probar conexión</button><button class="btn f" onclick="App.Sync.createGist()">Crear Gist</button><button class="btn primary" onclick="App.Sync.push()">Push</button><button class="btn" onclick="App.Sync.pull()">Pull</button></div>
     <div class="item-meta" style="margin-top:10px">Última sync: ${esc(cfg.lastSync||"Nunca")}</div>
-  </div><div class="card"><div class="card-title">OTA Updates</div><br><div class="form-row fr1"><div class="field"><label class="label">URL version.json</label><input id="cfg-version" class="input" value="${esc(cfg.versionUrl||"version.json")}"></div></div><button class="btn" onclick="App.Sync.saveConfig();App.Sync.checkVersion()">Verificar versión</button><br><br><span class="badge b-neu">Versión local ${APP_VERSION}</span></div></div>`;
+  </div><div class="card"><div class="card-title">OTA Updates</div><br><div class="form-row fr1"><div class="field"><label class="label">URL version.json</label><input id="cfg-version" class="input" value="${esc(cfg.versionUrl||"version.json")}"></div></div><button class="btn" onclick="App.Sync.saveConfig();App.Sync.checkVersion()">Verificar versión</button><br><br><span class="badge b-neu">Versión local ${APP_VERSION}</span></div></div>
+  <div class="card"><div class="card-title">Sucursales · ${EMPRESAS[Context.active()].nombre}</div><div class="item-meta">Base corregida: SANTIAGO · PUERTO PLATA · TENARES. Puedes agregar más sucursales por empresa.</div><br><div id="branches-manager"></div></div>`;
+  Branches.renderManager();
  },
- readConfig(){ return {pat:byId("cfg-pat")?.value||"",gistId:byId("cfg-gist")?.value||"",autoSync:!!byId("cfg-auto")?.checked,versionUrl:byId("cfg-version")?.value||"version.json"}; }
+ readConfig(){ return {pat:(byId("cfg-pat")?.value||"").trim(),gistId:Sync.normalizeGistId(byId("cfg-gist")?.value||""),autoSync:!!byId("cfg-auto")?.checked,versionUrl:(byId("cfg-version")?.value||"version.json").trim()}; }
 };
 
 const Sync = {
@@ -708,24 +787,24 @@ const Sync = {
  normalizeGistId(value){
   const raw=String(value||"").trim();
   if(!raw) return "";
-  const clean=raw.replace(/\/$/,"");
-  const match=clean.match(/([a-f0-9]{20,40})$/i);
-  return match ? match[1] : clean;
+  const clean=raw.split(/[?#]/)[0].replace(/\/+$/,"");
+  const parts=clean.split("/").filter(Boolean);
+  const candidate=parts[parts.length-1] || clean;
+  const match=candidate.match(/^[a-f0-9]{20,40}$/i);
+  return match ? candidate : raw;
  },
  headers(pat){
-  return {
-   "Authorization":`Bearer ${String(pat||"").trim()}`,
-   "Accept":"application/vnd.github+json",
-   "X-GitHub-Api-Version":"2022-11-28",
-   "Content-Type":"application/json"
-  };
+  const token=String(pat||"").trim();
+  const h={"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json"};
+  if(token) h.Authorization=`Bearer ${token}`;
+  return h;
  },
  async readError(res){
   let body="";
   try{ body=await res.text(); }catch{}
   let msg=body;
   try{ const json=JSON.parse(body); msg=json.message || body; }catch{}
-  if(res.status===404) return "404 Not Found: el Gist ID no existe, no pertenece a esta cuenta, es privado y el PAT no tiene permiso, o pegaste una URL completa en vez del ID. Usa Crear Gist o pega solo el ID final del enlace.";
+  if(res.status===404) return "404 Not Found: el Gist no existe o el token no tiene acceso. Usa Crear Gist para generar uno nuevo, o verifica que el PAT sea del mismo usuario y tenga permisos de Gist lectura/escritura.";
   if(res.status===401) return "401 Unauthorized: el PAT es inválido, expiró o no fue guardado correctamente.";
   if(res.status===403) return "403 Forbidden: el PAT no tiene permiso de escritura para Gists o GitHub bloqueó la petición.";
   if(res.status===422) return "422 Validation Failed: GitHub rechazó el contenido enviado al Gist.";
@@ -736,6 +815,12 @@ const Sync = {
   const res=await fetch(`https://api.github.com/gists/${gistId}`,{headers:Sync.headers(cfg.pat),cache:"no-store"});
   if(!res.ok) throw new Error(await Sync.readError(res));
   return await res.json();
+ },
+ async test(){
+  Sync.saveConfig(); const cfg=Store.get().settings; const gistId=Sync.normalizeGistId(cfg.gistId);
+  if(!cfg.pat||!gistId) return UI.toast("PAT y Gist ID son obligatorios para probar","err");
+  try{ await Sync.ensureRemote({...cfg,gistId}); UI.toast("Conexión Gist validada"); }
+  catch(e){ console.error(e); UI.toast("Error conexión: "+e.message,"err"); }
  },
  async createGist(){
   Sync.saveConfig(); const cfg=Store.get().settings; if(!cfg.pat) return UI.toast("Indica un PAT de GitHub","err");
@@ -748,11 +833,20 @@ const Sync = {
   }catch(e){ console.error(e); UI.toast("Error creando Gist: "+e.message,"err"); }
  },
  async push(){
-  Sync.saveConfig(); const cfg=Store.get().settings; const gistId=Sync.normalizeGistId(cfg.gistId);
-  if(!cfg.pat||!gistId) return UI.toast("PAT y Gist ID son obligatorios","err");
+  Sync.saveConfig(); const cfg=Store.get().settings; let gistId=Sync.normalizeGistId(cfg.gistId);
+  if(!cfg.pat) return UI.toast("El PAT de GitHub es obligatorio","err");
   try{
-   await Sync.ensureRemote({...cfg,gistId});
-   const payload={files:{[SYNC_FILE]:{content:JSON.stringify(Store.get(),null,2)}}};
+   if(!gistId){ await Sync.createGist(); return; }
+   try{ await Sync.ensureRemote({...cfg,gistId}); }
+   catch(e){
+    if(String(e.message).includes("404")){
+     UI.toast("Gist no encontrado. Creando uno nuevo vinculado a este PAT...","warn");
+     await Sync.createGist();
+     return;
+    }
+    throw e;
+   }
+   const payload={description:"GE Business Hub Pro Sync",files:{[SYNC_FILE]:{content:JSON.stringify(Store.get(),null,2)}}};
    const res=await fetch(`https://api.github.com/gists/${gistId}`,{method:"PATCH",headers:Sync.headers(cfg.pat),body:JSON.stringify(payload)});
    if(!res.ok) throw new Error(await Sync.readError(res));
    Store.update(s=>{s.settings.gistId=gistId;s.settings.lastSync=nowISO();},"sync:pushed"); UI.toast("Datos subidos al Gist");
@@ -792,7 +886,7 @@ const Export = {
  }
 };
 
-return {APP_VERSION, EventBus, Store, Context, UI, Router, Contacts, Agenda, Actions, Sales, CRM, Weeks, Map:MapModule, Forms, Integrations, Settings, Sync, Export, Analytics, init:UI.init};
+return {APP_VERSION, EventBus, Store, Context, UI, Router, Contacts, Agenda, Actions, Sales, CRM, Weeks, Map:MapModule, Forms, Integrations, Branches, Settings, Sync, Export, Analytics, init:UI.init};
 })();
 document.addEventListener("DOMContentLoaded", App.init);
 </script>
