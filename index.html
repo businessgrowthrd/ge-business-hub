@@ -701,34 +701,73 @@ const Sync = {
  open(){ Router.go("settings"); },
  saveConfig(){
   const next=Settings.readConfig();
+  next.gistId = Sync.normalizeGistId(next.gistId);
   Store.update(s=>{s.settings={...s.settings,...next};},"sync:config");
   UI.toast("Configuración guardada");
  },
- headers(pat){ return {"Authorization":`Bearer ${pat}`,"Accept":"application/vnd.github+json","Content-Type":"application/json"}; },
+ normalizeGistId(value){
+  const raw=String(value||"").trim();
+  if(!raw) return "";
+  const clean=raw.replace(/\/$/,"");
+  const match=clean.match(/([a-f0-9]{20,40})$/i);
+  return match ? match[1] : clean;
+ },
+ headers(pat){
+  return {
+   "Authorization":`Bearer ${String(pat||"").trim()}`,
+   "Accept":"application/vnd.github+json",
+   "X-GitHub-Api-Version":"2022-11-28",
+   "Content-Type":"application/json"
+  };
+ },
+ async readError(res){
+  let body="";
+  try{ body=await res.text(); }catch{}
+  let msg=body;
+  try{ const json=JSON.parse(body); msg=json.message || body; }catch{}
+  if(res.status===404) return "404 Not Found: el Gist ID no existe, no pertenece a esta cuenta, es privado y el PAT no tiene permiso, o pegaste una URL completa en vez del ID. Usa Crear Gist o pega solo el ID final del enlace.";
+  if(res.status===401) return "401 Unauthorized: el PAT es inválido, expiró o no fue guardado correctamente.";
+  if(res.status===403) return "403 Forbidden: el PAT no tiene permiso de escritura para Gists o GitHub bloqueó la petición.";
+  if(res.status===422) return "422 Validation Failed: GitHub rechazó el contenido enviado al Gist.";
+  return `${res.status} ${msg}`;
+ },
+ async ensureRemote(cfg){
+  const gistId=Sync.normalizeGistId(cfg.gistId);
+  const res=await fetch(`https://api.github.com/gists/${gistId}`,{headers:Sync.headers(cfg.pat),cache:"no-store"});
+  if(!res.ok) throw new Error(await Sync.readError(res));
+  return await res.json();
+ },
  async createGist(){
   Sync.saveConfig(); const cfg=Store.get().settings; if(!cfg.pat) return UI.toast("Indica un PAT de GitHub","err");
   try{
-   const res=await fetch("https://api.github.com/gists",{method:"POST",headers:Sync.headers(cfg.pat),body:JSON.stringify({description:"GE Business Hub Pro Sync",public:false,files:{[SYNC_FILE]:{content:JSON.stringify(Store.get(),null,2)}}})});
-   if(!res.ok) throw new Error(`${res.status} ${await res.text()}`);
-   const data=await res.json(); Store.update(s=>{s.settings.gistId=data.id;s.settings.lastSync=nowISO();},"sync:created"); UI.toast("Gist creado");
+   const payload={description:"GE Business Hub Pro Sync",public:false,files:{[SYNC_FILE]:{content:JSON.stringify(Store.get(),null,2)}}};
+   const res=await fetch("https://api.github.com/gists",{method:"POST",headers:Sync.headers(cfg.pat),body:JSON.stringify(payload)});
+   if(!res.ok) throw new Error(await Sync.readError(res));
+   const data=await res.json(); Store.update(s=>{s.settings.gistId=data.id;s.settings.lastSync=nowISO();},"sync:created"); UI.toast("Gist creado y vinculado");
+   Router.go("settings");
   }catch(e){ console.error(e); UI.toast("Error creando Gist: "+e.message,"err"); }
  },
  async push(){
-  Sync.saveConfig(); const cfg=Store.get().settings; if(!cfg.pat||!cfg.gistId) return UI.toast("PAT y Gist ID son obligatorios","err");
+  Sync.saveConfig(); const cfg=Store.get().settings; const gistId=Sync.normalizeGistId(cfg.gistId);
+  if(!cfg.pat||!gistId) return UI.toast("PAT y Gist ID son obligatorios","err");
   try{
-   const res=await fetch(`https://api.github.com/gists/${cfg.gistId}`,{method:"PATCH",headers:Sync.headers(cfg.pat),body:JSON.stringify({files:{[SYNC_FILE]:{content:JSON.stringify(Store.get(),null,2)}}})});
-   if(!res.ok) throw new Error(`${res.status} ${await res.text()}`);
-   Store.update(s=>{s.settings.lastSync=nowISO();},"sync:pushed"); UI.toast("Datos subidos al Gist");
+   await Sync.ensureRemote({...cfg,gistId});
+   const payload={files:{[SYNC_FILE]:{content:JSON.stringify(Store.get(),null,2)}}};
+   const res=await fetch(`https://api.github.com/gists/${gistId}`,{method:"PATCH",headers:Sync.headers(cfg.pat),body:JSON.stringify(payload)});
+   if(!res.ok) throw new Error(await Sync.readError(res));
+   Store.update(s=>{s.settings.gistId=gistId;s.settings.lastSync=nowISO();},"sync:pushed"); UI.toast("Datos subidos al Gist");
   }catch(e){ console.error(e); UI.toast("Error push: "+e.message,"err"); }
  },
  async pull(){
-  Sync.saveConfig(); const cfg=Store.get().settings; if(!cfg.pat||!cfg.gistId) return UI.toast("PAT y Gist ID son obligatorios","err");
+  Sync.saveConfig(); const cfg=Store.get().settings; const gistId=Sync.normalizeGistId(cfg.gistId);
+  if(!cfg.pat||!gistId) return UI.toast("PAT y Gist ID son obligatorios","err");
   try{
-   const res=await fetch(`https://api.github.com/gists/${cfg.gistId}`,{headers:Sync.headers(cfg.pat)});
-   if(!res.ok) throw new Error(`${res.status} ${await res.text()}`);
-   const gist=await res.json(); let file=gist.files[SYNC_FILE] || Object.values(gist.files)[0]; let content=file.content;
-   if(file.truncated && file.raw_url){ content = await (await fetch(file.raw_url)).text(); }
-   const remote=JSON.parse(content); Store.set({...remote,settings:{...Store.get().settings,...remote.settings,lastSync:nowISO()}},"sync:pulled"); UI.toast("Datos descargados del Gist");
+   const gist=await Sync.ensureRemote({...cfg,gistId});
+   let file=gist.files[SYNC_FILE] || Object.values(gist.files||{})[0];
+   if(!file) throw new Error("El Gist no contiene archivos para importar.");
+   let content=file.content;
+   if(file.truncated && file.raw_url){ const raw=await fetch(file.raw_url,{cache:"no-store"}); if(!raw.ok) throw new Error("No se pudo leer raw_url del Gist."); content=await raw.text(); }
+   const remote=JSON.parse(content); Store.set({...remote,settings:{...Store.get().settings,...remote.settings,gistId,lastSync:nowISO()}},"sync:pulled"); UI.toast("Datos descargados del Gist");
   }catch(e){ console.error(e); UI.toast("Error pull: "+e.message,"err"); }
  },
  scheduleAutoPush: debounce(()=>{ const cfg=Store.get().settings; if(cfg.autoSync&&cfg.pat&&cfg.gistId) Sync.push(); },180000),
